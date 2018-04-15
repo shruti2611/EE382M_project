@@ -95,11 +95,13 @@ input [MBUS_CMD_WIDTH-1:0] mbus_cmd3_i; // Main bus3 command
 input [MBUS_CMD_WIDTH-1:0] mbus_cmd2_i; // Main bus2 command
 input [MBUS_CMD_WIDTH-1:0] mbus_cmd1_i; // Main bus1 command
 input [MBUS_CMD_WIDTH-1:0] mbus_cmd0_i; // Main bus0 command
+
+input [ADDR_WIDTH-1:0]  mbus_addr3_i;  // Main bus3 address
+input [ADDR_WIDTH-1:0]  mbus_addr2_i;  // Main bus2 address
+input [ADDR_WIDTH-1:0]  mbus_addr1_i;  // Main bus1 address
+input [ADDR_WIDTH-1:0]  mbus_addr0_i;  // Main bus0 address
+
 // Coherence buses
-input [ADDR_WIDTH-1:0]  mbus_addr3_i;  // Coherence bus3 address
-input [ADDR_WIDTH-1:0]  mbus_addr2_i;  // Coherence bus2 address
-input [ADDR_WIDTH-1:0]  mbus_addr1_i;  // Coherence bus1 address
-input [ADDR_WIDTH-1:0]  mbus_addr0_i;  // Coherence bus0 address
 input                   cbus_ack3_i;  // Coherence bus3 acknowledge
 input                   cbus_ack2_i;  // Coherence bus2 acknowledge
 input                   cbus_ack1_i;  // Coherence bus1 acknowledge
