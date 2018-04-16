@@ -15,6 +15,17 @@ class input_driver extends uvm_driver #(input_tx);
 	endfunction : build_phase
 
 	task run_phase(uvm_phase phase);
+		always@(posedge mesi_in.clk)
+		begin
+			input_tx in_tx;
+
+			seq_item_port.get_next_item(in_tx);
+
+			mesi_in.wr 		= in_tx.wr;
+			mesi_in.rd 		= in_tx.rd;
+			mesi_in.data_in 	= in_tx.data_in;
+		end
+
 	endtask : run_phase
 
 endclass : input_driver

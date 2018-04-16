@@ -7,9 +7,13 @@ class input_sequence extends uvm_sequence #(input_tx);
 
 	task body();
 
-		input_tx tx;
+		input_tx in_tx;
+		in_tx 		= input_tx::type_id::create("in_tx");
+		start_item(in_tx);
 
 		//Generate Transactions
 
+		//
+		finish_item(in_tx);
 	endtask : body
 endclass

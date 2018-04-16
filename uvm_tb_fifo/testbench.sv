@@ -7,10 +7,18 @@ module testbench;
 	logic rst;
 
 	mesi_input_interface mesi_in(clk, rst);
-	mesi_output_interface mesi_out();
+	mesi_output_interface mesi_out(clk, rst);
 	
 	//instantiate mesi module
-
+	mesi_isc_basi_fifo fifo_module( .clk(clk),
+					.rst(rst),
+					.wr_i(mesi_in.wr),
+					.rd_i(mesi_in.rd),
+					.data_i(mesi_in.data_in),
+					.data_o(mesi_out.data_out),
+					.status_empty_o(mesi_out.status_empty),
+					.status_full_o(mesi_out.status_full)
+				      );
 	//Clock generation
 	initial begin
 		clk 		= 1'b0;
