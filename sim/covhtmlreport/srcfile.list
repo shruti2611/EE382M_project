@@ -1,0 +1,4 @@
+../tb/coverage.sv
+../tb/modules.sv
+../tb/sequences.sv
+../tb/tests.sv
