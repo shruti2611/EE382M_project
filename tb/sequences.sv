@@ -16,6 +16,10 @@ class input_tx extends uvm_sequence_item;
 		super.new(name);
 	endfunction : new
 
+	function string convert2string;
+            convert2string={$sformatf("wr = %b, rd = %b, data_in = %b",wr, rd, data_in)};
+        endfunction: convert2string
+
 endclass : input_tx
 
 class output_tx extends uvm_sequence_item;
@@ -28,6 +32,10 @@ class output_tx extends uvm_sequence_item;
 	function new(string name ="");
 		super.new(name);	
 	endfunction : new
+
+	function string convert2string;
+            convert2string={$sformatf("data_out = %b, status_empty = %b, status_full = %b",data_out, status_empty, status_full)};
+        endfunction: convert2string
 
 endclass : output_tx
 
@@ -123,25 +131,24 @@ endclass:input_sequence4
 
 
 
+class seq_of_commands extends uvm_sequence #(input_tx);
+        `uvm_object_utils(seq_of_commands)
+        `uvm_declare_p_sequencer(uvm_sequencer#(input_tx))
 
-//class seq_of_commands extends uvm_sequence #(alu_transaction_in);
-//        `uvm_object_utils(seq_of_commands)
-//        `uvm_declare_p_sequencer(uvm_sequencer#(alu_transaction_in))
-//
-//        function new (string name = "");
-//            super.new(name);
-//        endfunction: new
-//
-//        task body;
-//            repeat(1000)
-//            begin
-//                simple_seq seq;
-//                seq = simple_seq::type_id::create("seq");
-//                assert( seq.randomize() );
-//                seq.start(p_sequencer);
-//            end
-//        endtask: body
-//
-//    endclass: seq_of_commands
+        function new (string name = "");
+            super.new(name);
+        endfunction: new
+
+        task body;
+            repeat(10)
+            begin
+                input_sequence seq;
+                seq = input_sequence::type_id::create("seq");
+                assert( seq.randomize() );
+                seq.start(p_sequencer);
+            end
+        endtask: body
+
+    endclass: seq_of_commands
 
 endpackage: sequences

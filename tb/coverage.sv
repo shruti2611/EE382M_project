@@ -11,7 +11,6 @@ class coverage extends uvm_component;
 
 	uvm_tlm_analysis_fifo #(input_tx) cfifo_in;
 	uvm_tlm_analysis_fifo #(output_tx) cfifo_out;
-	//Define Covergroup
 
 	virtual mesi_input_interface mesi_in;
 
@@ -24,7 +23,7 @@ class coverage extends uvm_component;
 	logic fifo_full;
 
 	
-	 covergroup basic_fifo_cover @(posedge(mesi_in.clk));
+	 covergroup basic_fifo_cover;
         
     	 read: coverpoint rd {
 		bins read_low 	= {1'b0};
@@ -76,6 +75,11 @@ class coverage extends uvm_component;
 		basic_fifo_cover=new;
 	endfunction:new
 
+	function void connect_phase(uvm_phase phase);
+		cport_in.connect(cfifo_in.analysis_export);
+		cport_out.connect(cfifo_out.analysis_export);
+	endfunction : connect_phase
+
 
 	function void build_phase(uvm_phase phase);
 
@@ -89,7 +93,6 @@ class coverage extends uvm_component;
 		cfifo_out	= new("cfifo_out", this);
 		cport_in	= new("cport_in", this);
 		cport_out	= new("cport_out", this);
-		
 	endfunction: build_phase
 
 
@@ -100,16 +103,19 @@ class coverage extends uvm_component;
 
 		forever begin
 			@(negedge mesi_in.clk)
-			cfifo_in.get(in_tx);
-			cfifo_out.get(out_tx);
+			//cfifo_in.try_get(in_tx);
+			//cfifo_out.try_get(out_tx);
 
-			rst		= in_tx.rst;
-			rd		= in_tx.rd;
-			wr		= in_tx.wr;
-			data_in		= in_tx.data_in;
-			data_out	= out_tx.data_out;
-			fifo_empty	= out_tx.status_empty;
-			fifo_full	= out_tx.status_full;
+			//rst		= in_tx.rst;
+			//rd		= in_tx.rd;
+			//wr		= in_tx.wr;
+			//data_in		= in_tx.data_in;
+			//data_out	= out_tx.data_out;
+			//fifo_empty	= out_tx.status_empty;
+			//fifo_full	= out_tx.status_full;
+			
+			basic_fifo_cover.sample();
+			
 		end
 	endtask: run_phase
 

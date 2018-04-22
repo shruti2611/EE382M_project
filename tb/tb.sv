@@ -12,12 +12,12 @@ module testbench;
 	reg clk;
 	reg rst;
 
-	mesi_input_interface mesi_in(clk, rst);
-	mesi_output_interface mesi_out(clk, rst);
+	mesi_input_interface mesi_in(clk);
+	mesi_output_interface mesi_out(clk);
 	
 	//instantiate mesi module
 	mesi_isc_basic_fifo fifo_module( .clk(clk),
-					.rst(rst),
+					.rst(mesi_in.rst),
 					.wr_i(mesi_in.wr),
 					.rd_i(mesi_in.rd),
 					.data_i(mesi_in.data_in),
@@ -28,7 +28,6 @@ module testbench;
 	//Clock generation
 	initial begin
 		clk 		= 1'b0;
-		rst 		= 1'b0; 
 	end
 
 	always begin

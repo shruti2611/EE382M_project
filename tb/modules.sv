@@ -29,7 +29,8 @@ class input_driver extends uvm_driver #(input_tx);
 			input_tx in_tx;
 			
 			@(posedge mesi_in.clk)
-			seq_item_port.get_next_item(in_tx);
+			seq_item_port.get(in_tx);
+   			mesi_in.rst		= in_tx.rst;
 			mesi_in.wr 		= in_tx.wr;
 			mesi_in.rd 		= in_tx.rd;
 			mesi_in.data_in 	= in_tx.data_in;
@@ -94,6 +95,7 @@ class input_monitor extends uvm_monitor;
 
 			in_tx 		= input_tx::type_id::create("in_tx");
 
+			in_tx.rst	= mesi_in.rst;
 			in_tx.wr 	= mesi_in.wr;
 			in_tx.rd 	= mesi_in.rd;
 			in_tx.data_in 	= mesi_in.data_in;

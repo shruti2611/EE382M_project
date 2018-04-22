@@ -1,15 +1,15 @@
 # do run.do
 # Model Technology ModelSim SE-64 vlog 10.6 Compiler 2016.12 Dec 13 2016
-# Start time: 20:32:37 on Apr 21,2018
+# Start time: 17:57:24 on Apr 22,2018
 # vlog ../mesi_isc/trunk/src/rtl/mesi_isc_basic_fifo.v ../mesi_isc/trunk/src/rtl/mesi_isc_define.v 
 # -- Compiling module mesi_isc_basic_fifo
 # 
 # Top level modules:
 # 	mesi_isc_basic_fifo
-# End time: 20:32:37 on Apr 21,2018, Elapsed time: 0:00:00
+# End time: 17:57:24 on Apr 22,2018, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim SE-64 vlog 10.6 Compiler 2016.12 Dec 13 2016
-# Start time: 20:32:37 on Apr 21,2018
+# Start time: 17:57:24 on Apr 22,2018
 # vlog "+cover" -sv ../tb/interfaces.sv ../tb/sequences.sv ../tb/coverage.sv ../tb/scoreboard.sv ../tb/modules.sv ../tb/tests.sv ../tb/tb.sv 
 # -- Compiling interface mesi_input_interface
 # -- Compiling interface mesi_output_interface
@@ -35,10 +35,10 @@
 # 
 # Top level modules:
 # 	testbench
-# End time: 20:32:38 on Apr 21,2018, Elapsed time: 0:00:01
+# End time: 17:57:25 on Apr 22,2018, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 # vsim -c testbench 
-# Start time: 20:32:38 on Apr 21,2018
+# Start time: 17:57:25 on Apr 22,2018
 # ** Note: (vsim-3812) Design is being optimized...
 # //  ModelSim SE-64 10.6 Dec 13 2016Linux 2.6.32-696.18.7.el6.x86_64
 # //
@@ -90,20 +90,82 @@
 # UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(215) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.3
 # UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(217) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
 # UVM_INFO @ 0: reporter [RNTST] Running test sample_test...
-# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1268) @ 0: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# 
+# 
+# 
+# Reset Value : x
+# UVM_INFO ../tb/scoreboard.sv(49) @ 15000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = x, rd = x, data_in = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# UVM_INFO ../tb/scoreboard.sv(50) @ 15000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, status_empty = x, status_full = x
+# 
+# 
+# 
+# Reset Value : 0
+# UVM_INFO ../tb/scoreboard.sv(49) @ 45000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 11101100011101001011000000000101
+# UVM_INFO ../tb/scoreboard.sv(50) @ 45000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, status_empty = x, status_full = x
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 75000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 10110101000101101000101100101100
+# UVM_INFO ../tb/scoreboard.sv(50) @ 75000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 105000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 00000110110100111101110100011010
+# UVM_INFO ../tb/scoreboard.sv(50) @ 105000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 0
+# UVM_INFO ../tb/scoreboard.sv(49) @ 135000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 00010111000111111001110001001001
+# UVM_INFO ../tb/scoreboard.sv(50) @ 135000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 165000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 01101101001010001001111110100100
+# UVM_INFO ../tb/scoreboard.sv(50) @ 165000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 195000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 00001010011100110001000101001011
+# UVM_INFO ../tb/scoreboard.sv(50) @ 195000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 225000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 00001011111110011101001011110110
+# UVM_INFO ../tb/scoreboard.sv(50) @ 225000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 0
+# UVM_INFO ../tb/scoreboard.sv(49) @ 255000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 11000111110111100000011011010101
+# UVM_INFO ../tb/scoreboard.sv(50) @ 255000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# 
+# 
+# 
+# Reset Value : 1
+# UVM_INFO ../tb/scoreboard.sv(49) @ 285000: uvm_test_top.env_h.scoreboard_h [Input Transaction] wr = 1, rd = 1, data_in = 11110101001011001111001110010101
+# UVM_INFO ../tb/scoreboard.sv(50) @ 285000: uvm_test_top.env_h.scoreboard_h [Output Transaction] data_out = 00000000000000000000000000000000, status_empty = 1, status_full = 0
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1268) @ 285000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
 # 
 # --- UVM Report Summary ---
 # 
 # ** Report counts by severity
-# UVM_INFO :    4
+# UVM_INFO :   24
 # UVM_WARNING :    0
 # UVM_ERROR :    0
 # UVM_FATAL :    0
 # ** Report counts by id
+# [Input Transaction]    10
+# [Output Transaction]    10
 # [Questa UVM]     2
 # [RNTST]     1
 # [TEST_DONE]     1
 # ** Note: $finish    : /misc/linuxws/packages/mentor_2016/modelsim10.6/modeltech/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
-#    Time: 0 ps  Iteration: 216  Instance: /testbench
-# End time: 20:32:45 on Apr 21,2018, Elapsed time: 0:00:07
+#    Time: 285 ns  Iteration: 70  Instance: /testbench
+# End time: 17:57:31 on Apr 22,2018, Elapsed time: 0:00:06
 # Errors: 0, Warnings: 0

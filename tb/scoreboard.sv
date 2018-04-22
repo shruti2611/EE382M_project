@@ -15,6 +15,8 @@ class scoreboard extends uvm_scoreboard;
 	input_tx in_tx;
 	output_tx out_tx;
 
+        virtual mesi_input_interface mesi_in;
+
 	function new(string name, uvm_component parent);
 		super.new(name, parent);
 		in_tx 	= new("in_tx");
@@ -29,6 +31,11 @@ class scoreboard extends uvm_scoreboard;
 	endfunction : build_phase
 
 	function void connect_phase(uvm_phase phase);
+		if(!uvm_config_db#(virtual mesi_input_interface)::get(null, "*", "mesi_in", mesi_in))
+		begin
+			`uvm_fatal("INPUT MONITOR", "Unable to get Handle to mesi_input_interface object");
+		end	
+
 		sport_in.connect(sfifo_in.analysis_export);
 		sport_out.connect(sfifo_out.analysis_export);
 	endfunction : connect_phase
@@ -37,12 +44,16 @@ class scoreboard extends uvm_scoreboard;
 		forever begin
 			sfifo_in.get(in_tx);
 			sfifo_out.get(out_tx);
-			compare();
+			$display("\n\n");
+			$display("Reset Value : %d", in_tx.rst);
+			`uvm_info("Input Transaction", in_tx.convert2string(), UVM_LOW);
+			`uvm_info("Output Transaction", out_tx.convert2string(), UVM_LOW);	
+			//compare();
 		end
 	endtask : run
 
 	function void compare();
-	//TODO	
+		
 	endfunction : compare
 
 endclass : scoreboard
