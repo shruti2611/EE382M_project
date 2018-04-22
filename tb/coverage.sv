@@ -62,11 +62,18 @@ class coverage extends uvm_component;
 		bins false 	= {1'b0};
 	 }
 
-	 reset: coverpoint(rst && !fifo_full && !fifo_empty){
+	 reset: coverpoint(rst && !fifo_full && fifo_empty){
 		bins true 	= {1'b1};
 		bins false 	= {1'b0};
 
 	 }
+
+	 reset_value: coverpoint(rst){
+		bins true 	= {1'b1};
+		bins false 	= {1'b0};
+
+	 }
+
  	
 	endgroup
 	
@@ -103,16 +110,16 @@ class coverage extends uvm_component;
 
 		forever begin
 			@(negedge mesi_in.clk)
-			//cfifo_in.try_get(in_tx);
-			//cfifo_out.try_get(out_tx);
+			cfifo_in.try_get(in_tx);
+			cfifo_out.try_get(out_tx);
 
-			//rst		= in_tx.rst;
-			//rd		= in_tx.rd;
-			//wr		= in_tx.wr;
-			//data_in		= in_tx.data_in;
-			//data_out	= out_tx.data_out;
-			//fifo_empty	= out_tx.status_empty;
-			//fifo_full	= out_tx.status_full;
+			rst		= in_tx.rst;
+			rd		= in_tx.rd;
+			wr		= in_tx.wr;
+			data_in		= in_tx.data_in;
+			data_out	= out_tx.data_out;
+			fifo_empty	= out_tx.status_empty;
+			fifo_full	= out_tx.status_full;
 			
 			basic_fifo_cover.sample();
 			
