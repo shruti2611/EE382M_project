@@ -24,7 +24,7 @@ class coverage extends uvm_component;
 	logic fifo_full;
 
 	
-	 covergroup inputs;
+	 covergroup basic_fifo_cover @(posedge(mesi_in.clk));
         
     	 read: coverpoint rd {
 		bins read_low 	= {1'b0};
@@ -73,6 +73,7 @@ class coverage extends uvm_component;
 	
 	function new(string name, uvm_component parent);
 		super.new(name, parent);
+		basic_fifo_cover=new;
 	endfunction:new
 
 
@@ -88,6 +89,7 @@ class coverage extends uvm_component;
 		cfifo_out	= new("cfifo_out", this);
 		cport_in	= new("cport_in", this);
 		cport_out	= new("cport_out", this);
+		
 	endfunction: build_phase
 
 
