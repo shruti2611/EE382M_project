@@ -110,8 +110,8 @@ class coverage extends uvm_component;
 
 		forever begin
 			@(negedge mesi_in.clk)
-			cfifo_in.try_get(in_tx);
-			cfifo_out.try_get(out_tx);
+			cfifo_in.get(in_tx);
+			cfifo_out.get(out_tx);
 
 			rst		= in_tx.rst;
 			rd		= in_tx.rd;
