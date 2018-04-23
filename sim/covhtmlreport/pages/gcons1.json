@@ -1,5 +1,0 @@
-var g_db_data = [
-{dummy:0},
-{name:'inputs',f:1,type:6,id:4319,tb:'144',h:'142',m:'2',hp:'98.61%',cov:['99.23%','G'],g:'100.00%',gp:['99.23%','G'],opts:[[],['merge_instance','auto(true)']],hdlPath:'/coverage/alu_subscriber_in',parent:'4318'},
-{name:'outputs',f:1,type:6,id:4326,tb:'36',h:'35',m:'1',hp:'97.22%',cov:['98.95%','G'],g:'100.00%',gp:['98.95%','G'],opts:[[],['merge_instance','auto(true)']],hdlPath:'/coverage/alu_subscriber_out',parent:'4325'}];
-processConsCovergroupsData(g_db_data);

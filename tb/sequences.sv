@@ -28,6 +28,10 @@ class output_tx extends uvm_sequence_item;
 	logic [31:0] data_out;
 	logic status_empty;
 	logic status_full;
+	logic [31:0] entry [3:0];
+	logic [1:0] ptr_rd;
+	logic [1:0] ptr_wr;
+	logic [1:0] fifo_depth;
 
 	function new(string name ="");
 		super.new(name);	

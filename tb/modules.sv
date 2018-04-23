@@ -137,6 +137,10 @@ class output_monitor extends uvm_monitor;
 			out_tx.data_out 	= mesi_out.data_out;
 			out_tx.status_empty 	= mesi_out.status_empty;
 			out_tx.status_full 	= mesi_out.status_full;
+			out_tx.entry		= mesi_out.entry;
+			out_tx.ptr_rd		= mesi_out.ptr_rd;
+			out_tx.ptr_wr		= mesi_out.ptr_wr;
+			out_tx.fifo_depth	= mesi_out.fifo_depth;
 
 			aport_out.write(out_tx);
 		end
