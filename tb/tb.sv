@@ -23,7 +23,11 @@ module testbench;
 					.data_i(mesi_in.data_in),
 					.data_o(mesi_out.data_out),
 					.status_empty_o(mesi_out.status_empty),
-					.status_full_o(mesi_out.status_full)
+					.status_full_o(mesi_out.status_full),
+					.ptr_rd(mesi_out.ptr_rd),
+					.ptr_wr(mesi_out.ptr_wr),
+					.fifo_depth(mesi_out.fifo_depth),
+					.entry(mesi_out.entry)
 				      );
 	//Clock generation
 	initial begin
