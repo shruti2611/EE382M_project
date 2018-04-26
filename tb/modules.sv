@@ -130,7 +130,6 @@ class output_monitor extends uvm_monitor;
 		forever
 		begin
 			output_tx out_tx;
-			@(posedge mesi_out.clk);
 			@(posedge mesi_out.clk)
 			out_tx	= output_tx::type_id::create("out_tx");
 

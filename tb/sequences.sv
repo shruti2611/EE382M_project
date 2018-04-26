@@ -12,9 +12,19 @@ class input_tx extends uvm_sequence_item;
 	rand logic [31:0] data_in;
 	rand logic rst; // added
 
+	virtual mesi_output_interface mesi_out;
+
+	
+
 	function new(string name = "");
 		super.new(name);
+		uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out);
 	endfunction : new
+
+	constraint const_read_not_empty{if(mesi_out.status_empty == 1'b1)(rd == 1'b0);}
+	constraint const_write_not_full{if(mesi_out.status_full == 1'b1)(wr == 1'b0);}
+	constraint const_reset{rst == 1'b0;}
+
 
 	function string convert2string;
             convert2string={$sformatf("wr = %b, rd = %b, data_in = %b",wr, rd, data_in)};
@@ -46,16 +56,26 @@ endclass : output_tx
 class input_sequence extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence);
 
+	// Adding constraints here
+
+	virtual mesi_output_interface mesi_out;
+
 	function new(string name ="");
 		super.new(name);
 	endfunction : new
 
 	task body();
 		input_tx in_tx;
+
+		uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out);
+
+			
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
-		assert(in_tx.randomize() with {in_tx.rd == 1'b1; in_tx.wr == 1'b1;});
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
+		in_tx.const_reset.constraint_mode(1);
+		assert(in_tx.randomize() with {in_tx.rd == 1'b0; in_tx.wr == 1'b1;});
 
 		finish_item(in_tx);
 	endtask : body
@@ -72,7 +92,9 @@ class input_sequence1 extends uvm_sequence #(input_tx);
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
+		in_tx.const_reset.constraint_mode(1);
 		assert(in_tx.randomize() with {in_tx.rd == 1'b1; in_tx.wr == 1'b0;});
 
 		finish_item(in_tx);
@@ -90,8 +112,10 @@ class input_sequence2 extends uvm_sequence #(input_tx);
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
-		assert(in_tx.randomize() with {in_tx.rd == 1'b0; in_tx.wr == 1'b1;});
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
+	
+		assert(in_tx.randomize() with {in_tx.rd == 1'b0; in_tx.wr == 1'b1;in_tx.rst==1'b0;});
 
 		finish_item(in_tx);
 	endtask : body
@@ -108,6 +132,8 @@ class input_sequence3 extends uvm_sequence #(input_tx);
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
 
 		assert(in_tx.randomize() with {in_tx.rst == 1'b0; in_tx.rd == 1'b1; in_tx.wr == 1'b0;});
 
@@ -126,6 +152,8 @@ class input_sequence4 extends uvm_sequence #(input_tx);
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
 
 		assert(in_tx.randomize() with {in_tx.rst == 1'b0; in_tx.rd == 1'b0; in_tx.wr == 1'b1;});
 
@@ -144,7 +172,9 @@ class input_sequence5 extends uvm_sequence #(input_tx);
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
+		in_tx.const_read_not_empty.constraint_mode(1);
+		in_tx.const_write_not_full.constraint_mode(1);
+		in_tx.const_reset.constraint_mode(1);
 		assert(in_tx.randomize() );
 
 		finish_item(in_tx);
