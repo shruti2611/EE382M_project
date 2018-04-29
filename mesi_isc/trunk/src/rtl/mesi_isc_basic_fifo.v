@@ -85,6 +85,12 @@ output                  status_empty_o; // There are no valid entries in the
 output                  status_full_o; // There are no free entries in the fifo
                                        //  all the entries are valid
 
+/*output [FIFO_SIZE_LOG2-1:0] fifo_depth;  // Number of used entries
+output                    fifo_depth_increase;
+output                    fifo_depth_decrease;*/
+                                       //
+
+
 // Regs
 //================================
 reg  [DATA_WIDTH-1:0]   data_o;       // Data out to be rad 
@@ -94,6 +100,11 @@ reg  [FIFO_SIZE_LOG2-1:0] ptr_rd;      // Fifo read pointer
 wire [FIFO_SIZE_LOG2-1:0] ptr_rd_plus_1;
 reg                     status_empty;
 reg                     status_full;
+
+/*reg [FIFO_SIZE_LOG2-1:0] fifo_depth_1;  // Number of used entries
+reg                    fifo_depth_increase_1;
+reg                    fifo_depth_decrease_1;*/
+
 wire [FIFO_SIZE_LOG2-1:0] fifo_depth;  // Number of used entries
 wire                    fifo_depth_increase;
 wire                    fifo_depth_decrease;
@@ -161,6 +172,11 @@ assign ptr_rd_plus_1 = ptr_rd + 1;
 //================================
 assign  status_empty_o        = status_empty;
 assign  status_full_o         = status_full;
+
+//depth
+assign fifo_depth_1 = fifo_depth;
+assign fifo_depth_increase_1 = fifo_depth_increase;
+assign fifo_depth_decrease_1 = fifo_depth_decrease;
 
 // status_empty
 // status_empty is set when there are no any valid entries
