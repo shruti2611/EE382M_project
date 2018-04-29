@@ -16,6 +16,8 @@ class input_tx extends uvm_sequence_item;
 		super.new(name);
 	endfunction : new
 
+	constraint broad_fifo_status_not_full{ broad_fifo_status_full == 1'b0;}
+
 	function string convert2string;
             convert2string={$sformatf("mbus_cmd_array = %x, mbus_addr_array = %x, broad_fifo_status_full = %x", mbus_cmd_array, mbus_addr_array, broad_fifo_status_full)};
         endfunction: convert2string
@@ -162,7 +164,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
 
         task body;
             
-	    repeat(1)
+	repeat(1)
             begin
                 input_sequence1 seq;
                 seq = input_sequence1::type_id::create("seq");
@@ -170,14 +172,14 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                 seq.start(p_sequencer);
             end
 
-	    repeat(1)
+	repeat(1)
             begin
                 input_sequence2 seq;
                 seq = input_sequence2::type_id::create("seq");
                 assert( seq.randomize() );
                 seq.start(p_sequencer);
             end
-	   repeat(1)
+	repeat(1)
             begin
                 input_sequence3 seq;
                 seq = input_sequence3::type_id::create("seq");
@@ -185,7 +187,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                 seq.start(p_sequencer);
             end
 
-repeat(1)
+	repeat(1)
             begin
                 input_sequence4 seq;
                 seq = input_sequence4::type_id::create("seq");
@@ -193,14 +195,14 @@ repeat(1)
                 seq.start(p_sequencer);
             end
 
-repeat(1)
+	repeat(1)
             begin
                 input_sequence5 seq;
                 seq = input_sequence5::type_id::create("seq");
                 assert( seq.randomize() );
                 seq.start(p_sequencer);
             end
-repeat(20)
+	repeat(100)
             begin
                 input_sequence seq;
                 seq = input_sequence::type_id::create("seq");

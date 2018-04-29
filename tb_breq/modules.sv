@@ -30,9 +30,9 @@ class input_driver extends uvm_driver #(input_tx);
 			
 			@(posedge mesi_in.clk)
 			seq_item_port.get(in_tx);
-   			mesi_in.rst		= in_tx.rst;
+   			mesi_in.rst			= in_tx.rst;
 			mesi_in.mbus_cmd_array		= in_tx.mbus_cmd_array;
-			mesi_in.mbus_addr_array 		= in_tx.mbus_addr_array;
+			mesi_in.mbus_addr_array 	= in_tx.mbus_addr_array;
 			mesi_in.broad_fifo_status_full	= in_tx.broad_fifo_status_full;
 		end
 	endtask : run_phase
@@ -95,9 +95,9 @@ class input_monitor extends uvm_monitor;
 
 			in_tx 		= input_tx::type_id::create("in_tx");
 
-			in_tx.rst	= mesi_in.rst;
-			in_tx.mbus_cmd_array 	= mesi_in.mbus_cmd_array;
-			in_tx.mbus_addr_array	= mesi_in.mbus_addr_array;
+			in_tx.rst			= mesi_in.rst;
+			in_tx.mbus_cmd_array 		= mesi_in.mbus_cmd_array;
+			in_tx.mbus_addr_array		= mesi_in.mbus_addr_array;
 			in_tx.broad_fifo_status_full	= mesi_in.broad_fifo_status_full;
 
 			aport_in.write(in_tx);
