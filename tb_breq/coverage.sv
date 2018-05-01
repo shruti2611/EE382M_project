@@ -27,6 +27,103 @@ class coverage extends uvm_component;
  	virtual mesi_input_interface mesi_in;
 	
 	covergroup breq_fifo_cover;
+
+		/******** Input cover points ******************/
+
+		cmd_array_0 : coverpoint mbus_cmd_array[2:0] {
+				bins	nop = {3'b000};
+				bins	wr = {3'b001};
+				bins 	rd = {3'b010};
+				bins 	wr_broad = {3'b011};
+				bins	rd_broad = {3'b100};	
+		}
+
+		cmd_array_1 : coverpoint mbus_cmd_array[5:3] {
+				bins	nop = {3'b000};
+				bins	wr = {3'b001};
+				bins 	rd = {3'b010};
+				bins 	wr_broad = {3'b011};
+				bins	rd_broad = {3'b100};	
+		}
+		cmd_array_2 : coverpoint mbus_cmd_array[8:6] {
+				bins	nop = {3'b000};
+				bins	wr = {3'b001};
+				bins 	rd = {3'b010};
+				bins 	wr_broad = {3'b011};
+				bins	rd_broad = {3'b100};	
+		}
+		cmd_array_3 : coverpoint mbus_cmd_array[11:9] {
+				bins	nop = {3'b000};
+				bins	wr = {3'b001};
+				bins 	rd = {3'b010};
+				bins 	wr_broad = {3'b011};
+				bins	rd_broad = {3'b100};	
+		}
+
+		reset : coverpoint  rst {
+				bins low = {1'b0};
+				bins high = {1'b1};
+		}
+
+		broad_fifo_status : coverpoint broad_fifo_status_full {
+				bins full = {1'b1};
+				bins empty = {1'b0};
+		}
+
+		/************** Output cover points ******************/
+		ack_0 : coverpoint mbus_ack_array[0] {
+				bins high = {1'b1};
+				bins low = {1'b0};
+		}
+
+		ack_1 : coverpoint mbus_ack_array[1] {
+				bins high = {1'b1};
+				bins low = {1'b0};
+		}
+
+		ack_2 : coverpoint mbus_ack_array[2] {
+				bins high = {1'b1};
+				bins low = {1'b0};
+		}
+
+		ack_3 : coverpoint mbus_ack_array[3] {
+				bins high = {1'b1};
+				bins low = {1'b0};
+		}
+
+		broad_fifo_write : coverpoint broad_fifo_wr {
+				bins high = {1'b1};
+				bins low  = {1'b0};
+		}
+
+		type_broad : coverpoint broad_type {
+				bins	nop = {2'b00};
+				bins    wr  = {2'b01};
+				bins 	rd  = {2'b10}; 
+		}
+		
+		cpu_id_broad : coverpoint broad_cpu_id {
+				bins 	cpu_0 = {2'b00};
+				bins 	cpu_1 = {2'b01};
+				bins 	cpu_2 = {2'b10};
+				bins 	cpu_3 = {2'b11};
+
+		}
+
+		id_broad:   coverpoint 	broad_id {
+				bins	cpu_0 = {7'b0};
+				bins	cpu_1 = {7'b1};
+				bins	cpu_2 = {7'b10};	
+				bins	cpu_3 = {7'b11};	
+		}
+
+	/***************** crosses ***************/
+
+	cross_cpu_id: cross id_broad, type_broad;
+	cross_broad_wr : cross id_broad,broad_fifo_wr;
+
+
+
  	
 	endgroup
 	
@@ -65,6 +162,18 @@ class coverage extends uvm_component;
 			@(negedge mesi_in.clk)
 			cfifo_in.get(in_tx);
 			cfifo_out.get(out_tx);
+
+			mbus_cmd_array = in_tx.mbus_cmd_array;
+			mbus_addr_array = in_tx.mbus_addr_array;
+			broad_fifo_status_full = in_tx.broad_fifo_status_full;
+			rst = in_tx.rst;
+
+			mbus_ack_array = out_tx.mbus_ack_array;
+			broad_fifo_wr = out_tx.broad_fifo_wr;
+			broad_addr = out_tx.broad_addr;
+			broad_type = out_tx.broad_type;
+			broad_cpu_id = out_tx.broad_cpu_id;
+			broad_id = out_tx.broad_id;
 
 						
 			breq_fifo_cover.sample();

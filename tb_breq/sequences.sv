@@ -12,11 +12,22 @@ class input_tx extends uvm_sequence_item;
 	rand logic broad_fifo_status_full;
 	rand logic rst;
 
+	virtual mesi_output_interface mesi_out;
+
+
 	function new(string name = "");
 		super.new(name);
+		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
+
 	endfunction : new
 
 	constraint broad_fifo_status_not_full{ broad_fifo_status_full == 1'b0;}
+	constraint cmd_array_0 {mbus_cmd_array[2:0] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
+	constraint cmd_array_1 {mbus_cmd_array[5:3] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
+	constraint cmd_array_2 {mbus_cmd_array[8:6] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
+	constraint cmd_array_3 {mbus_cmd_array[11:9] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
+
+	//constraint ack_not {if(mesi_out.mbus_ack_array[0] == 0) }
 
 	function string convert2string;
             convert2string={$sformatf("mbus_cmd_array = %x, mbus_addr_array = %x, broad_fifo_status_full = %x", mbus_cmd_array, mbus_addr_array, broad_fifo_status_full)};
@@ -48,8 +59,12 @@ endclass : output_tx
 class input_sequence extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence);
 
+	virtual mesi_output_interface mesi_out;
+
 	function new(string name ="");
 		super.new(name);
+		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
+
 	endfunction : new
 
 	task body();
@@ -57,9 +72,13 @@ class input_sequence extends uvm_sequence #(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
+		//if((in_tx.cmd_array[2:0] == 3'b011 || in_tx.cmd_array[2:0] == 3'b100) && mesi_out.mbus_ack_array[2:0] == 3'b000)
+			
+		
 		assert(in_tx.randomize() );
 
 		finish_item(in_tx);
+
 	endtask : body
 endclass:input_sequence
 
@@ -158,8 +177,12 @@ class seq_of_commands extends uvm_sequence #(input_tx);
         `uvm_object_utils(seq_of_commands)
         `uvm_declare_p_sequencer(uvm_sequencer#(input_tx))
 
+	virtual mesi_output_interface mesi_out;
+
+
         function new (string name = "");
             super.new(name);
+	    void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
         endfunction: new
 
         task body;
@@ -168,7 +191,12 @@ class seq_of_commands extends uvm_sequence #(input_tx);
             begin
                 input_sequence1 seq;
                 seq = input_sequence1::type_id::create("seq");
-                assert( seq.randomize() );
+		
+                //assert( seq.rand_mode(mesi_out.mbus_ack_array[0]) );
+
+		//seq.rand_mode(mesi_out.mbus_ack_array[0]);
+                assert( seq.randomize());
+		
                 seq.start(p_sequencer);
             end
 

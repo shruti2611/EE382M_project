@@ -190,6 +190,8 @@ class scoreboard extends uvm_scoreboard;
 		`uvm_info("fifo_reg[3]", $sformatf("fifo_reg[3] %x", fifo_reg[3]), UVM_LOW);	
 		`uvm_info("rd_ptr_reg", $sformatf("rd_ptr_reg %x", rd_ptr_reg), UVM_LOW);	
 		`uvm_info("wr_ptr_reg", $sformatf("wr_ptr_reg %x", wr_ptr_reg), UVM_LOW);	
+		`uvm_info(" DUT wr_ptr", $sformatf("wr_ptr %x", out_tx.ptr_wr), UVM_LOW);	
+		`uvm_info(" DUT read_ptr", $sformatf("read_ptr %x", out_tx.ptr_rd), UVM_LOW);	
 		
 	endfunction
 		
@@ -203,7 +205,7 @@ class scoreboard extends uvm_scoreboard;
 			`uvm_error("STATUS_EMPTY",$sformatf("DUT : status_empty = %x SCOREBOARD = status_empty: %x",out_tx.status_empty, status_empty))
 		end
 
-		if(out_tx.data_out != data_out) begin 
+		if((out_tx.data_out != data_out) && in_tx.rd ) begin 
 			`uvm_error("DATA_OUT",$sformatf("DUT : data_out = %x SCOREBOARD : data_out = %x",out_tx.data_out, data_out))
 		end
 
