@@ -47,10 +47,10 @@ class coverage extends uvm_component;
 		bins full 	= {1'b1};
 	 }
 
-	 read_empty: cross fifo_empty, rd;
+	 //read_empty: cross fifo_empty, rd;
 
 
-	 write_full: cross fifo_full, wr;
+	 //write_full: cross fifo_full, wr;
 
 	 empty_not_full: coverpoint (fifo_empty && !fifo_full) {
 		bins true 	= {1'b1};
