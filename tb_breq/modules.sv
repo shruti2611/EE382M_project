@@ -11,6 +11,9 @@ class input_driver extends uvm_driver #(input_tx);
 	`uvm_component_utils(input_driver);
 
 	virtual mesi_input_interface mesi_in;
+	virtual mesi_output_interface mesi_out;
+	
+	logic ack_receive;	
 
 	function new(string name, uvm_component parent);
 		super.new(name, parent);
@@ -24,6 +27,7 @@ class input_driver extends uvm_driver #(input_tx);
 	endfunction : build_phase
 
 	task run_phase(uvm_phase phase);
+	  //fork
 		forever
 		begin
 			input_tx in_tx;
@@ -34,7 +38,26 @@ class input_driver extends uvm_driver #(input_tx);
 			mesi_in.mbus_cmd_array		= in_tx.mbus_cmd_array;
 			mesi_in.mbus_addr_array 	= in_tx.mbus_addr_array;
 			mesi_in.broad_fifo_status_full	= in_tx.broad_fifo_status_full;
+
 		end
+
+		/*forever 
+		begin
+					output_tx out_tx;	
+					mesi_out.mbus_ack_array = out_tx.mbus_ack_array;
+
+					while (!mesi_out.mbus_ack_array[0]) begin
+						ack_receive = 1'b0;	
+					end
+						ack_receive = 1'b1;
+		end*/
+
+		
+	  //join_none				
+
+			
+
+
 	endtask : run_phase
 
 endclass : input_driver

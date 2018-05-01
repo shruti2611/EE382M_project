@@ -4,6 +4,12 @@ package sequences;
 
 import uvm_pkg::*;
 
+
+/********** new class **************/
+
+
+
+/************************************/
 class input_tx extends uvm_sequence_item;
 	`uvm_object_utils(input_tx);
 
@@ -12,14 +18,51 @@ class input_tx extends uvm_sequence_item;
 	rand logic broad_fifo_status_full;
 	rand logic rst;
 
+	logic	[11:0]	 last_cmd_array;
+
 	virtual mesi_output_interface mesi_out;
 
 
 	function new(string name = "");
+
 		super.new(name);
 		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
+		last_cmd_array = mbus_cmd_array;
 
 	endfunction : new
+
+	/********* writing post randomize **************/
+	function void post_randomize();
+		
+		$display("Its post randomization");
+
+	endfunction
+
+	/***************** pre_randomize *******************/
+
+	function void pre_randomize();
+
+		$display("Its pre randomization");
+
+		$display("last value : %x", last_cmd_array);
+
+		if(mesi_out.mbus_ack_array[0] == 1'b0) begin
+			//mbus_cmd_array[2:0] = last_cmd_array[2:0];
+			//mbus_cmd_array.rand_mode(0);
+		end
+
+		if(mesi_out.mbus_ack_array[1] == 1'b0) begin
+			//mbus_cmd_array[5:3] = last_cmd_array[5:3];
+			//mbus_cmd_array.rand_mode(0);
+		end
+
+
+
+		
+
+	endfunction
+
+
 
 	constraint broad_fifo_status_not_full{ broad_fifo_status_full == 1'b0;}
 	constraint cmd_array_0 {mbus_cmd_array[2:0] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
@@ -27,7 +70,6 @@ class input_tx extends uvm_sequence_item;
 	constraint cmd_array_2 {mbus_cmd_array[8:6] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
 	constraint cmd_array_3 {mbus_cmd_array[11:9] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
 
-	//constraint ack_not {if(mesi_out.mbus_ack_array[0] == 0) }
 
 	function string convert2string;
             convert2string={$sformatf("mbus_cmd_array = %x, mbus_addr_array = %x, broad_fifo_status_full = %x", mbus_cmd_array, mbus_addr_array, broad_fifo_status_full)};
@@ -60,6 +102,10 @@ class input_sequence extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence);
 
 	virtual mesi_output_interface mesi_out;
+	virtual mesi_input_interface mesi_in;
+
+	input_tx in_tx;
+
 
 	function new(string name ="");
 		super.new(name);
@@ -67,15 +113,17 @@ class input_sequence extends uvm_sequence #(input_tx);
 
 	endfunction : new
 
+			
 	task body();
+
 		input_tx in_tx;
+
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
-		//if((in_tx.cmd_array[2:0] == 3'b011 || in_tx.cmd_array[2:0] == 3'b100) && mesi_out.mbus_ack_array[2:0] == 3'b000)
-			
 		
-		assert(in_tx.randomize() );
+		in_tx.randomize();
+
 
 		finish_item(in_tx);
 
@@ -112,7 +160,7 @@ class input_sequence2 extends uvm_sequence #(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
-		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_cmd_array == 12'b100100011011;mbus_addr_array == {32'h11,32'h22,32'h33,32'h44};broad_fifo_status_full == 1'b0;} );
+		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h11,32'h22,32'h33,32'h44};broad_fifo_status_full == 1'b0;} );
 
 		finish_item(in_tx);
 	endtask : body
@@ -130,7 +178,7 @@ class input_sequence3 extends uvm_sequence #(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
-		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_cmd_array == 12'b100100011011;mbus_addr_array == {32'h10,32'h20,32'h30,32'h40};broad_fifo_status_full == 1'b0;} );
+		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h10,32'h20,32'h30,32'h40};broad_fifo_status_full == 1'b0;} );
 
 		finish_item(in_tx);
 	endtask : body
@@ -148,7 +196,7 @@ class input_sequence4 extends uvm_sequence #(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
-		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_cmd_array == 12'b100100011011;mbus_addr_array == {32'h01,32'h02,32'h03,32'h04};broad_fifo_status_full == 1'b0;} );
+		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h01,32'h02,32'h03,32'h04};broad_fifo_status_full == 1'b0;} );
 
 		finish_item(in_tx);
 	endtask : body
@@ -166,7 +214,7 @@ class input_sequence5 extends uvm_sequence #(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
 
-		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_cmd_array == 12'b100100011011;mbus_addr_array == {32'h000,32'h111,32'h222,32'h3333};broad_fifo_status_full == 1'b0;} );
+		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h000,32'h111,32'h222,32'h3333};broad_fifo_status_full == 1'b0;} );
 
 		finish_item(in_tx);
 	endtask : body
@@ -187,7 +235,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
 
         task body;
             
-	repeat(1)
+	/*repeat(1)
             begin
                 input_sequence1 seq;
                 seq = input_sequence1::type_id::create("seq");
@@ -229,7 +277,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                 seq = input_sequence5::type_id::create("seq");
                 assert( seq.randomize() );
                 seq.start(p_sequencer);
-            end
+            end*/
 	repeat(100)
             begin
                 input_sequence seq;
