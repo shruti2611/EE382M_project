@@ -6,8 +6,17 @@ import uvm_pkg::*;
 
 
 /********** new class **************/
+class last_tx extends uvm_sequence_item;
+	`uvm_object_utils(last_tx);
 
+	logic [11:0] mbus_cmd_array;
+	logic [127:0] mbus_addr_array;
 
+	function new(string name = "");
+		super.new(name);
+	endfunction : new
+	
+endclass : last_tx
 
 /************************************/
 class input_tx extends uvm_sequence_item;
@@ -22,19 +31,35 @@ class input_tx extends uvm_sequence_item;
 
 	virtual mesi_output_interface mesi_out;
 
-
 	function new(string name = "");
-
 		super.new(name);
 		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
-		last_cmd_array = mbus_cmd_array;
-
 	endfunction : new
 
 	/********* writing post randomize **************/
 	function void post_randomize();
 		
 		$display("Its post randomization");
+		
+		if(mesi_out.mbus_ack_array[0] == 1'b0)
+		begin
+			mbus_cmd_array[2:0] 		= last_cmd_array[2:0];
+		end
+		
+		if(mesi_out.mbus_ack_array[1] == 1'b0)
+		begin
+			mbus_cmd_array[5:3] 		= last_cmd_array[5:3];
+		end
+		
+		if(mesi_out.mbus_ack_array[2] == 1'b0)
+		begin
+			mbus_cmd_array[8:6] 		= last_cmd_array[8:6];
+		end
+		
+		if(mesi_out.mbus_ack_array[3] == 1'b0)
+		begin
+			mbus_cmd_array[11:9] 		= last_cmd_array[11:9];
+		end
 
 	endfunction
 
@@ -46,23 +71,7 @@ class input_tx extends uvm_sequence_item;
 
 		$display("last value : %x", last_cmd_array);
 
-		if(mesi_out.mbus_ack_array[0] == 1'b0) begin
-			//mbus_cmd_array[2:0] = last_cmd_array[2:0];
-			//mbus_cmd_array.rand_mode(0);
-		end
-
-		if(mesi_out.mbus_ack_array[1] == 1'b0) begin
-			//mbus_cmd_array[5:3] = last_cmd_array[5:3];
-			//mbus_cmd_array.rand_mode(0);
-		end
-
-
-
-		
-
 	endfunction
-
-
 
 	constraint broad_fifo_status_not_full{ broad_fifo_status_full == 1'b0;}
 	constraint cmd_array_0 {mbus_cmd_array[2:0] inside {3'b00,3'b10,3'b01,3'b11,3'b100};}
@@ -98,7 +107,7 @@ class output_tx extends uvm_sequence_item;
 endclass : output_tx
 
 
-class input_sequence extends uvm_sequence #(input_tx);
+class input_sequence extends uvm_sequence#(input_tx);
 	`uvm_object_utils(input_sequence);
 
 	virtual mesi_output_interface mesi_out;
@@ -106,25 +115,18 @@ class input_sequence extends uvm_sequence #(input_tx);
 
 	input_tx in_tx;
 
-
 	function new(string name ="");
 		super.new(name);
 		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
-
 	endfunction : new
-
-			
+	
 	task body();
 
 		input_tx in_tx;
-
 		in_tx 		= input_tx::type_id::create("in_tx");
+
 		start_item(in_tx);
-
-		
-		in_tx.randomize();
-
-
+			assert(in_tx.randomize());
 		finish_item(in_tx);
 
 	endtask : body
@@ -133,35 +135,40 @@ endclass:input_sequence
 class input_sequence1 extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence1);
 
+	input_tx in_tx;
+
 	function new(string name ="");
 		super.new(name);
 	endfunction : new
-
+	
 	task body();
-		input_tx in_tx;
+
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
-		assert(in_tx.randomize with {in_tx.rst == 1;} );
-
+			assert(in_tx.randomize with {in_tx.rst == 1;});
+	
 		finish_item(in_tx);
+
 	endtask : body
 endclass:input_sequence1
 
 class input_sequence2 extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence2);
 
+	last_tx l_tx;
 	function new(string name ="");
 		super.new(name);
+		void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
 	endfunction : new
 
 	task body();
 		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-
+		in_tx.last_cmd_array		= l_tx.mbus_cmd_array;
 		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h11,32'h22,32'h33,32'h44};broad_fifo_status_full == 1'b0;} );
-
+		l_tx.mbus_cmd_array		= in_tx.mbus_cmd_array;
+		$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
 		finish_item(in_tx);
 	endtask : body
 endclass:input_sequence2
@@ -226,36 +233,35 @@ class seq_of_commands extends uvm_sequence #(input_tx);
         `uvm_declare_p_sequencer(uvm_sequencer#(input_tx))
 
 	virtual mesi_output_interface mesi_out;
-
+	virtual mesi_input_interface mesi_in;
+	last_tx l_tx;
 
         function new (string name = "");
             super.new(name);
 	    void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
+	    void'(uvm_config_db#(virtual mesi_input_interface)::get(null,"*","mesi_in",mesi_in));
+	    void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
         endfunction: new
 
         task body;
             
-	/*repeat(1)
+	repeat(1)
             begin
                 input_sequence1 seq;
                 seq = input_sequence1::type_id::create("seq");
-		
-                //assert( seq.rand_mode(mesi_out.mbus_ack_array[0]) );
-
-		//seq.rand_mode(mesi_out.mbus_ack_array[0]);
                 assert( seq.randomize());
-		
                 seq.start(p_sequencer);
             end
-
-	repeat(1)
+	
+	repeat(10)
             begin
-                input_sequence2 seq;
-                seq = input_sequence2::type_id::create("seq");
-                assert( seq.randomize() );
-                seq.start(p_sequencer);
+        	input_sequence2 seq2;
+        	seq2 = input_sequence2::type_id::create("seq2");
+                assert(seq2.randomize());
+                seq2.start(p_sequencer);
             end
-	repeat(1)
+	
+	/*repeat(1)
             begin
                 input_sequence3 seq;
                 seq = input_sequence3::type_id::create("seq");
@@ -278,13 +284,13 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                 assert( seq.randomize() );
                 seq.start(p_sequencer);
             end*/
-	repeat(100)
-            begin
-                input_sequence seq;
-                seq = input_sequence::type_id::create("seq");
-                assert( seq.randomize() );
-                seq.start(p_sequencer);
-            end
+//	repeat(100)
+//            begin
+//                input_sequence seq;
+//                seq = input_sequence::type_id::create("seq");
+//                assert( seq.randomize() );
+//                seq.start(p_sequencer);
+//            end
 
 
 	
