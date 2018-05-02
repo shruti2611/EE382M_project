@@ -42,44 +42,30 @@ class input_tx extends uvm_sequence_item;
 	/********* writing post randomize **************/
 	function void post_randomize();
 		
-		$display("Its post randomization");
-		$display("MBUS CMD : %x", mbus_cmd_array);	
-		$display("LAST CMD : %x", last_cmd_array);	
+		$display("\n\n");
 		if((last_ack_array[0] == 1'b0) && (last_cmd_array[2:0] === 3'b011 || last_cmd_array[2:0] === 3'b100))
 		begin
 			mbus_cmd_array[2:0] 		= last_cmd_array[2:0];
 			mbus_addr_array[31:0] 		= last_addr_array[31:0];
-			$display("MBUS_CMD 0");
 		end
 		
 		if((last_ack_array[1] == 1'b0) && (last_cmd_array[5:3] === 3'b011 || last_cmd_array[5:3] === 3'b100))
 		begin
 			mbus_cmd_array[5:3] 		= last_cmd_array[5:3];
 			mbus_addr_array[63:32] 		= last_addr_array[63:32];
-			$display("MBUS_CMD 1");
 		end
 		
 		if((last_ack_array[2] == 1'b0) && (last_cmd_array[8:6] === 3'b011 || last_cmd_array[8:6] === 3'b100))
 		begin
 			mbus_cmd_array[8:6] 		= last_cmd_array[8:6];
 			mbus_addr_array[95:64] 		= last_addr_array[95:64];
-			$display("MBUS_CMD 2");
 		end
 		
 		if((last_ack_array[3]) == 1'b0 && (last_cmd_array[11:9] === 3'b011 || last_cmd_array[11:9] === 3'b100))
 		begin
 			mbus_cmd_array[11:9] 		= last_cmd_array[11:9];
 			mbus_addr_array[127:96] 	= last_addr_array[127:96];
-			$display("MBUS_CMD 3");
 		end
-
-	endfunction
-
-	/***************** pre_randomize *******************/
-
-	function void pre_randomize();
-
-		$display("Its pre randomization");
 
 	endfunction
 
@@ -160,7 +146,6 @@ class input_sequence1 extends uvm_sequence #(input_tx);
 		in_tx.last_cmd_array		= l_tx.mbus_cmd_array;
 		in_tx.last_addr_array		= l_tx.mbus_addr_array;
 		in_tx.last_ack_array		= l_tx.mbus_ack_array;
-		$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
 
 		assert(in_tx.randomize with {in_tx.rst == 1;});
 	
@@ -187,7 +172,6 @@ class input_sequence2 extends uvm_sequence #(input_tx);
 		in_tx.last_cmd_array		= l_tx.mbus_cmd_array;
 		in_tx.last_addr_array		= l_tx.mbus_addr_array;
 		in_tx.last_ack_array		= l_tx.mbus_ack_array;
-		$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
 
 		assert(in_tx.randomize() with { in_tx.rst == 0;broad_fifo_status_full == 1'b0;} );
 
@@ -267,22 +251,35 @@ class seq_of_commands extends uvm_sequence #(input_tx);
         endfunction: new
 
         task body;
-            
-	repeat(1)
-            begin
-                input_sequence1 seq;
-                seq = input_sequence1::type_id::create("seq");
-                assert( seq.randomize());
-                seq.start(p_sequencer);
-            end
-	
-	repeat(100)
-            begin
-        	input_sequence2 seq2;
-        	seq2 = input_sequence2::type_id::create("seq2");
-                assert(seq2.randomize());
-                seq2.start(p_sequencer);
-            end
+		repeat(2)
+        	    begin
+        	        input_sequence1 seq;
+        	        seq = input_sequence1::type_id::create("seq");
+        	        assert( seq.randomize());
+        	        seq.start(p_sequencer);
+        	    end
+		
+		repeat(20)
+        	    begin
+        		input_sequence2 seq2;
+        		seq2 = input_sequence2::type_id::create("seq2");
+        	        assert(seq2.randomize());
+        	        seq2.start(p_sequencer);
+        	    end
+		repeat(5)
+        	    begin
+        	        input_sequence1 seq;
+        	        seq = input_sequence1::type_id::create("seq");
+        	        assert( seq.randomize());
+        	        seq.start(p_sequencer);
+        	    end
+		repeat(20)
+        	    begin
+        		input_sequence2 seq2;
+        		seq2 = input_sequence2::type_id::create("seq2");
+        	        assert(seq2.randomize());
+        	        seq2.start(p_sequencer);
+		end
 	
 	/*repeat(1)
             begin
