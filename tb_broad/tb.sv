@@ -1,0 +1,48 @@
+`timescale 1ns / 100ps
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+import modules_pkg::*;
+import sequences::*;
+import coverage_pkg::*;
+import scoreboard_pkg::*;
+import tests::*;
+
+module testbench;
+
+	reg clk;
+	reg rst;
+
+	mesi_input_interface mesi_in(clk);
+	mesi_output_interface mesi_out(clk);
+	last_tx l_tx		= last_tx::type_id::create("l_tx");
+	
+	//instantiate mesi module
+	mesi_isc_broad broad_module(.clk(mesi_in.clk),
+     					.rst(mesi_in.rst),
+     					.cbus_ack_array_i(cbus_ack_array_i),
+					.broad_fifo_wr_i(broad_fifo_wr_i), 
+					.broad_addr_i(broad_addr_i), 
+					.broad_type_i(broad_type_i),
+					.broad_cpu_id_i(broad_cpu_id_i),
+					.broad_id_i(broad_id_i)
+					);
+
+	//Generate clock
+	initial begin
+		clk 		= 1'b0;
+	end
+
+	always begin
+		#15;
+		clk++;
+	end
+
+
+	initial begin
+		uvm_config_db #(virtual mesi_input_interface)::set(null, "*", "mesi_in", mesi_in);
+		uvm_config_db #(virtual mesi_output_interface)::set(null, "*", "mesi_out", mesi_out);
+	    	uvm_config_db#(last_tx)::set(null,"*","l_tx",l_tx);
+		run_test("sample_test");
+	end 
+
+endmodule

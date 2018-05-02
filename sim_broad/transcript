@@ -1,0 +1,437 @@
+# do run.do
+# Model Technology ModelSim SE-64 vlog 10.4b Compiler 2015.05 May 26 2015
+# Start time: 00:57:16 on May 02,2018
+# vlog ../mesi_isc/trunk/src/rtl/mesi_isc_basic_fifo.v ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v ./../mesi_isc/trunk/src/rtl/mesi_isc_broad_cntl.v 
+# -- Compiling module mesi_isc_basic_fifo
+# -- Compiling module mesi_isc_broad
+# -- Compiling module mesi_isc_broad_cntl
+# 
+# Top level modules:
+# 	mesi_isc_broad
+# End time: 00:57:16 on May 02,2018, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.4b Compiler 2015.05 May 26 2015
+# Start time: 00:57:16 on May 02,2018
+# vlog "+cover" -sv ../tb_broad/interfaces.sv ../tb_broad/sequences.sv ../tb_broad/coverage.sv ../tb_broad/scoreboard.sv ../tb_broad/modules.sv ../tb_broad/tests.sv ../tb_broad/tb.sv 
+# -- Compiling interface mesi_input_interface
+# -- Compiling interface mesi_output_interface
+# ** Note: (vlog-2286) Using implicit +incdir+/misc/linuxws/packages/mentor_2015/modelsim/modeltech/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+# -- Compiling package sequences
+# -- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+# -- Compiling package coverage_pkg
+# -- Importing package sequences
+# -- Compiling package scoreboard_pkg
+# -- Compiling package modules_pkg
+# -- Importing package coverage_pkg
+# -- Importing package scoreboard_pkg
+# -- Compiling package tests
+# -- Importing package modules_pkg
+# -- Compiling package tb_sv_unit
+# -- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+# -- Importing package modules_pkg
+# -- Importing package sequences
+# -- Importing package coverage_pkg
+# -- Importing package scoreboard_pkg
+# -- Importing package tests
+# -- Compiling module testbench
+# 
+# Top level modules:
+# 	testbench
+# End time: 00:57:17 on May 02,2018, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vsim -c testbench 
+# Start time: 00:57:17 on May 02,2018
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2241) Connection width does not match width of port 'cbus_ack_array_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(53).
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2241) Connection width does not match width of port 'broad_addr_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(55).
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2241) Connection width does not match width of port 'broad_type_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(56).
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2241) Connection width does not match width of port 'broad_cpu_id_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(57).
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2241) Connection width does not match width of port 'broad_id_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(58).
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2685) [TFMPC] - Too few port connections for 'broad_module'.  Expected 11, found 8.
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2718) [TFMPC] - Missing connection for port 'fifo_status_full_o'.
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2718) [TFMPC] - Missing connection for port 'cbus_cmd_array_o'.
+# ** Warning: ../tb_broad/tb.sv(20): (vopt-2718) [TFMPC] - Missing connection for port 'cbus_addr_o'.
+# ** Warning: ../tb_broad/tb.sv(22): (vopt-2958) Implicit wire 'cbus_ack_array_i' does not have any driver.
+# ** Warning: ../tb_broad/tb.sv(23): (vopt-2958) Implicit wire 'broad_fifo_wr_i' does not have any driver.
+# ** Warning: ../tb_broad/tb.sv(24): (vopt-2958) Implicit wire 'broad_addr_i' does not have any driver.
+# ** Warning: ../tb_broad/tb.sv(25): (vopt-2958) Implicit wire 'broad_type_i' does not have any driver.
+# ** Warning: ../tb_broad/tb.sv(26): (vopt-2958) Implicit wire 'broad_cpu_id_i' does not have any driver.
+# ** Warning: ../tb_broad/tb.sv(27): (vopt-2958) Implicit wire 'broad_id_i' does not have any driver.
+# //  ModelSim SE-64 10.4b May 26 2015 Linux 2.6.32-696.23.1.el6.x86_64
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# Loading sv_std.std
+# Loading mtiUvm.uvm_pkg
+# Loading work.sequences(fast)
+# Loading work.scoreboard_pkg(fast)
+# Loading work.coverage_pkg(fast)
+# Loading work.modules_pkg(fast)
+# Loading work.tests(fast)
+# Loading work.tb_sv_unit(fast)
+# Loading work.testbench(fast)
+# Loading work.mesi_isc_broad(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.mesi_input_interface(fast)
+# Loading work.mesi_output_interface(fast)
+# ** Warning: (vsim-3015) ../tb_broad/tb.sv(20): [PCDPC] - Port size (4) does not match connection size (1) for port 'cbus_ack_array_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(53).
+#    Time: 0 ps  Iteration: 0  Instance: /testbench/broad_module File: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v
+# ** Warning: (vsim-3015) ../tb_broad/tb.sv(20): [PCDPC] - Port size (32) does not match connection size (1) for port 'broad_addr_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(55).
+#    Time: 0 ps  Iteration: 0  Instance: /testbench/broad_module File: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v
+# ** Warning: (vsim-3015) ../tb_broad/tb.sv(20): [PCDPC] - Port size (2) does not match connection size (1) for port 'broad_type_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(56).
+#    Time: 0 ps  Iteration: 0  Instance: /testbench/broad_module File: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v
+# ** Warning: (vsim-3015) ../tb_broad/tb.sv(20): [PCDPC] - Port size (2) does not match connection size (1) for port 'broad_cpu_id_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(57).
+#    Time: 0 ps  Iteration: 0  Instance: /testbench/broad_module File: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v
+# ** Warning: (vsim-3015) ../tb_broad/tb.sv(20): [PCDPC] - Port size (5) does not match connection size (1) for port 'broad_id_i'. The port definition is at: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v(58).
+#    Time: 0 ps  Iteration: 0  Instance: /testbench/broad_module File: ../mesi_isc/trunk/src/rtl/mesi_isc_broad.v
+# Loading /misc/linuxws/packages/mentor_2015/modelsim/modeltech/uvm-1.1d/linux_x86_64/uvm_dpi.so
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(215) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.2
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(217) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
+# UVM_INFO @ 0: reporter [RNTST] Running test sample_test...
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1268) @ 2985000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :    4
+# UVM_WARNING :    0
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [Questa UVM]     2
+# [RNTST]     1
+# [TEST_DONE]     1
+# ** Note: $finish    : /misc/linuxws/packages/mentor_2015/modelsim/modeltech/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 2985 ns  Iteration: 70  Instance: /testbench
+# End time: 00:57:32 on May 02,2018, Elapsed time: 0:00:15
+# Errors: 0, Warnings: 20
