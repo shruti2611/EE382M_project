@@ -14,6 +14,7 @@ class scoreboard extends uvm_scoreboard;
 
 	input_tx in_tx;
 	output_tx out_tx;
+	last_tx l_tx;
 
 
         virtual mesi_input_interface mesi_in;
@@ -36,6 +37,7 @@ class scoreboard extends uvm_scoreboard;
 		begin
 			`uvm_fatal("INPUT MONITOR", "Unable to get Handle to mesi_input_interface object");
 		end	
+		void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
 
 		sport_in.connect(sfifo_in.analysis_export);
 		sport_out.connect(sfifo_out.analysis_export);
@@ -54,7 +56,7 @@ class scoreboard extends uvm_scoreboard;
 	logic [6:0] broad_id;
 
 	//Registers
-	logic prev_id;
+	logic [1:0]prev_id;
 
 	logic ack0_reg, ack1_reg, ack2_reg, ack3_reg;
 	logic [42:0] fifo_cpu0_reg[0:1],fifo_cpu1_reg[0:1], fifo_cpu2_reg[0:1],fifo_cpu3_reg[0:1] ;
@@ -75,12 +77,15 @@ class scoreboard extends uvm_scoreboard;
 	logic	wr0, wr1, wr2, wr3;
 	logic	[3:0]	empty_breq;
 	logic	[42:0]	data0, data1, data2, data3;
+	logic	[42:0]	data0_reg, data1_reg, data2_reg, data3_reg;
 	logic	[4:0]	broad_id0, broad_id1, broad_id2, broad_id3;
 	logic	full0, empty0;
 	logic	full1, empty1;
 	logic	full2, empty2;
 	logic	full3, empty3;
 	logic	[42:0]	rd_data0, rd_data1, rd_data2, rd_data3;
+	logic [11:0] mbus_cmd_array_val;
+	logic [11:0] mbus_cmd_array_reg;
 
 	logic [3:0] mbus_ack_array_val;
 	logic broad_fifo_wr_val;
@@ -103,7 +108,12 @@ class scoreboard extends uvm_scoreboard;
 			`uvm_info("RESET", $sformatf("Reset Value : %d", in_tx.rst), UVM_LOW);
 			`uvm_info("Input Transaction", in_tx.convert2string(), UVM_LOW);
 			`uvm_info("Output Transaction", out_tx.convert2string(), UVM_LOW);
+			//$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
 			
+			l_tx.mbus_cmd_array		= in_tx.mbus_cmd_array;
+			l_tx.mbus_addr_array		= in_tx.mbus_addr_array;
+			l_tx.mbus_ack_array		= out_tx.mbus_ack_array;
+	
 			getresult();
 		
 			if(mesi_in.rst 	== 1'b1)
@@ -151,6 +161,13 @@ class scoreboard extends uvm_scoreboard;
 				broad_type		= 2'b0;
 				broad_cpu_id		= 2'b0;
 				broad_id		= 7'b0;
+
+				data0_reg		= 42'b0;
+				data1_reg		= 42'b0;
+				data2_reg		= 42'b0;
+				data3_reg		= 42'b0;
+
+				mbus_cmd_array_reg	= 12'b0;
 			end
 			else
 			begin
@@ -191,12 +208,19 @@ class scoreboard extends uvm_scoreboard;
 				broad_id2_reg		= broad_id2;
 				broad_id3_reg		= broad_id3;
 
+				data0_reg		= data0;
+				data1_reg		= data1;
+				data2_reg		= data2;
+				data3_reg		= data3;
+
 				mbus_ack_array		= mbus_ack_array_val;
 				broad_fifo_wr		= broad_fifo_wr_val;
 				broad_addr		= broad_addr_val;
 				broad_type		= broad_type_val;
 				broad_cpu_id		= broad_cpu_id_val;
 				broad_id		= broad_id_val;
+
+				mbus_cmd_array_reg	= mbus_cmd_array_val;
 			end	
 
 			compare();
@@ -242,26 +266,33 @@ task scoreboard::compare();
 			if(out_tx.broad_id != broad_id) begin
 				`uvm_error("BROAD_ID",$sformatf("DUT BROAD_ID : %x SCOREBOARD BROAD_ID : %x", out_tx.broad_id, broad_id));
 			end
+
+			`uvm_info("OUT_TX MBUS_ACK_ARRAY", $sformatf("%x", out_tx.mbus_ack_array), UVM_LOW);
+			`uvm_info("OUT_TX BRAOD_FIFO_WR", $sformatf("%x", out_tx.broad_fifo_wr), UVM_LOW);
+			`uvm_info("OUT_TX BROAD_ADDR", $sformatf("%x", out_tx.broad_addr), UVM_LOW);
+			`uvm_info("OUT_TX BROAD_TYPE", $sformatf("%x", out_tx.broad_type), UVM_LOW);
+			`uvm_info("OUT_TX MBUS_CPU_ID", $sformatf("%x", out_tx.broad_cpu_id), UVM_LOW);
+			`uvm_info("OUT_TX BROAD_ID", $sformatf("%x", out_tx.broad_id), UVM_LOW);
 		
 endtask : compare
 
 
 task scoreboard::getresult;
 
-	`uvm_info("SCOREBOARD RD_PTR0_REG", $sformatf("%x", rd_ptr0_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD RD_PTR1_REG", $sformatf("%x", rd_ptr1_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD RD_PTR2_REG", $sformatf("%x", rd_ptr2_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD RD_PTR3_REG", $sformatf("%x", rd_ptr3_reg), UVM_LOW);
+	//`uvm_info("SCOREBOARD RD_PTR0_REG", $sformatf("%x", rd_ptr0_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD_PTR1_REG", $sformatf("%x", rd_ptr1_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD_PTR2_REG", $sformatf("%x", rd_ptr2_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD_PTR3_REG", $sformatf("%x", rd_ptr3_reg), UVM_LOW);
 
-	`uvm_info("SCOREBOARD WR_PTR0_REG", $sformatf("%x", wr_ptr0_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD WR_PTR1_REG", $sformatf("%x", wr_ptr1_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD WR_PTR2_REG", $sformatf("%x", wr_ptr2_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD WR_PTR3_REG", $sformatf("%x", wr_ptr3_reg), UVM_LOW);
+	//`uvm_info("SCOREBOARD WR_PTR0_REG", $sformatf("%x", wr_ptr0_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD WR_PTR1_REG", $sformatf("%x", wr_ptr1_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD WR_PTR2_REG", $sformatf("%x", wr_ptr2_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD WR_PTR3_REG", $sformatf("%x", wr_ptr3_reg), UVM_LOW);
 
-	`uvm_info("SCOREBOARD ACK0_REG", $sformatf("%x", ack0_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK1_REG", $sformatf("%x", ack1_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK2_REG", $sformatf("%x", ack2_reg), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK3_REG", $sformatf("%x", ack3_reg), UVM_LOW);
+	//`uvm_info("SCOREBOARD ACK0_REG", $sformatf("%x", ack0_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK1_REG", $sformatf("%x", ack1_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK2_REG", $sformatf("%x", ack2_reg), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK3_REG", $sformatf("%x", ack3_reg), UVM_LOW);
 
 	/************** Full Empty Signals **************************************************************************************************/
 
@@ -277,25 +308,11 @@ task scoreboard::getresult;
 		
 	/*************** Round robin arbiter scheme *****************/
 	
-	empty_breq 		= {empty3, empty2, empty1, empty0};
+	empty_breq 			= {empty3, empty2, empty1, empty0};
 				
-	mbus_ack_array 		= {ack3_reg, ack2_reg, ack1_reg, ack0_reg};
-	
-	/*********** breq_ack_array ****************************************************************************************************/
+	mbus_ack_array_val 		= {ack3_reg, ack2_reg, ack1_reg, ack0_reg};
 
-	ack0 = !ack0_reg && (in_tx.mbus_cmd_array[2:0] == 3'b11 ||  in_tx.mbus_cmd_array[2:0]== 3'b100 ) && !full0;
-	ack1 = !ack1_reg && (in_tx.mbus_cmd_array[5:3] == 3'b11 ||  in_tx.mbus_cmd_array[5:3]== 3'b100 ) && !full1;
-	ack2 = !ack2_reg && (in_tx.mbus_cmd_array[8:6] == 3'b11 ||  in_tx.mbus_cmd_array[8:6]== 3'b100 ) && !full2;
-	ack3 = !ack3_reg && (in_tx.mbus_cmd_array[11:9] == 3'b11 ||  in_tx.mbus_cmd_array[11:9]== 3'b100 ) && !full3;
-
-	/************ BREQ fifo signals ************************************************************************************************/
-
-	{wr0,data0} = {fifo_control (full0, in_tx.mbus_cmd_array[2:0],  in_tx.mbus_addr_array[31:0],2'b00),   broad_id0,2'b00};
-	{wr1,data1} = {fifo_control (full1, in_tx.mbus_cmd_array[5:3],  in_tx.mbus_addr_array[63:32],2'b01),  broad_id1,2'b01};
-	{wr2,data2} = {fifo_control (full2, in_tx.mbus_cmd_array[8:6],  in_tx.mbus_addr_array[95:64],2'b10),  broad_id2,2'b10};
-	{wr3,data3} = {fifo_control (full3, in_tx.mbus_cmd_array[11:9], in_tx.mbus_addr_array[127:96],2'b11), broad_id3,2'b11};
-	
-	/************** Full Empty Signals **************************************************************************************************/
+	mbus_cmd_array_val		= in_tx.mbus_cmd_array;
 
 	if(ack0_reg) begin
 	       broad_id0 	= broad_id0_reg + 1'b1;
@@ -329,7 +346,25 @@ task scoreboard::getresult;
 		broad_id3	= broad_id3_reg;
 	end
 	
+
 	
+	/*********** breq_ack_array ****************************************************************************************************/
+
+	ack0 = !ack0_reg && (in_tx.mbus_cmd_array[2:0] == 3'b11 ||  in_tx.mbus_cmd_array[2:0]== 3'b100 ) && !full0;
+	ack1 = !ack1_reg && (in_tx.mbus_cmd_array[5:3] == 3'b11 ||  in_tx.mbus_cmd_array[5:3]== 3'b100 ) && !full1;
+	ack2 = !ack2_reg && (in_tx.mbus_cmd_array[8:6] == 3'b11 ||  in_tx.mbus_cmd_array[8:6]== 3'b100 ) && !full2;
+	ack3 = !ack3_reg && (in_tx.mbus_cmd_array[11:9] == 3'b11 ||  in_tx.mbus_cmd_array[11:9]== 3'b100 ) && !full3;
+
+	/************ BREQ fifo signals ************************************************************************************************/
+
+	data0 = {fifo_control (full0, in_tx.mbus_cmd_array[2:0],  in_tx.mbus_addr_array[31:0],2'b00),   broad_id0,2'b00};
+	data1 = {fifo_control (full1, in_tx.mbus_cmd_array[5:3],  in_tx.mbus_addr_array[63:32],2'b01),  broad_id1,2'b01};
+	data2 = {fifo_control (full2, in_tx.mbus_cmd_array[8:6],  in_tx.mbus_addr_array[95:64],2'b10),  broad_id2,2'b10};
+	data3 = {fifo_control (full3, in_tx.mbus_cmd_array[11:9], in_tx.mbus_addr_array[127:96],2'b11), broad_id3,2'b11};
+	
+	/************** Full Empty Signals **************************************************************************************************/
+
+		
 	/***** Read and write signal for broad fifo *********/
 
 	case(prev_id)
@@ -382,18 +417,18 @@ task scoreboard::getresult;
 		end
 
 		2'b01: begin
-			casex(empty_breq)
+	  	      casex(empty_breq)
 				
-				4'b?0??:	next_id = 2'b10;
+			4'b?0??:	next_id = 2'b10;
 
-				4'b01??:	next_id	= 2'b11;
+			4'b01??:	next_id	= 2'b11;
 
-				4'b11?0:	next_id = 2'b00;
+			4'b11?0:	next_id = 2'b00;
 
-				4'b1101:	next_id = 2'b01;	
+			4'b1101:	next_id = 2'b01;	
 		
-				default: 	next_id = prev_id;
-			endcase
+			default: 	next_id = prev_id;
+		      endcase
 
 		end
 
@@ -468,7 +503,7 @@ task scoreboard::getresult;
 		fifo_cpu0[wr_ptr0_reg]			= fifo_cpu0_reg[wr_ptr0_reg];
 		fifo_cpu0[wr_ptr0_reg+1'b1]		= fifo_cpu0_reg[wr_ptr0_reg + 1'b1];
 		fifo_cpu0_valid[rd_ptr0_reg]		= 1'b0;
-		fifo_cpu0_valid[rd_ptr0_reg+1'b1]	= fifo_cpu0_valid_reg[wr_ptr0_reg+1'b1];
+		fifo_cpu0_valid[rd_ptr0_reg+1'b1]	= fifo_cpu0_valid_reg[rd_ptr0_reg+1'b1];
 		wr_ptr0					= wr_ptr0_reg;
 		rd_ptr0					= rd_ptr0_reg + 1'b1;
 
@@ -515,7 +550,7 @@ task scoreboard::getresult;
 		fifo_cpu1[wr_ptr1_reg]			= fifo_cpu1_reg[wr_ptr1_reg];;
 		fifo_cpu1[wr_ptr1_reg+1'b1]		= fifo_cpu1_reg[wr_ptr1_reg + 1'b1];
 		fifo_cpu1_valid[rd_ptr1_reg]		= 1'b0;
-		fifo_cpu1_valid[rd_ptr1_reg+1'b1]	= fifo_cpu1_valid_reg[wr_ptr1_reg+1'b1];
+		fifo_cpu1_valid[rd_ptr1_reg+1'b1]	= fifo_cpu1_valid_reg[rd_ptr1_reg+1'b1];
 		wr_ptr1					= wr_ptr1_reg;
 		rd_ptr1					= rd_ptr1_reg + 1'b1;
 
@@ -562,7 +597,7 @@ task scoreboard::getresult;
 		fifo_cpu2[wr_ptr2_reg]			= fifo_cpu2_reg[wr_ptr2_reg];
 		fifo_cpu2[wr_ptr2_reg+1'b1]		= fifo_cpu2_reg[wr_ptr2_reg + 1'b1];
 		fifo_cpu2_valid[rd_ptr2_reg]		= 1'b0;
-		fifo_cpu2_valid[rd_ptr2_reg+1'b1]	= fifo_cpu2_valid_reg[wr_ptr2_reg+1'b1];
+		fifo_cpu2_valid[rd_ptr2_reg+1'b1]	= fifo_cpu2_valid_reg[rd_ptr2_reg+1'b1];
 		wr_ptr2					= wr_ptr2_reg;
 		rd_ptr2					= rd_ptr2_reg + 1'b1;
 
@@ -609,7 +644,7 @@ task scoreboard::getresult;
 		fifo_cpu3[wr_ptr3_reg]			= fifo_cpu3_reg[wr_ptr3_reg];
 		fifo_cpu3[wr_ptr3_reg+1'b1]		= fifo_cpu3_reg[wr_ptr3_reg + 1'b1];
 		fifo_cpu3_valid[rd_ptr3_reg]		= 1'b0;
-		fifo_cpu3_valid[rd_ptr3_reg+1'b1]	= fifo_cpu3_valid_reg[wr_ptr3_reg+1'b1];
+		fifo_cpu3_valid[rd_ptr3_reg+1'b1]	= fifo_cpu3_valid_reg[rd_ptr3_reg+1'b1];
 		wr_ptr3					= wr_ptr3_reg;
 		rd_ptr3					= rd_ptr3_reg + 1'b1;
 
@@ -660,47 +695,51 @@ task scoreboard::getresult;
 	endcase
 	
 
-        `uvm_info("SCOREBOARD ACK0", $sformatf("%x", ack0), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK1", $sformatf("%x", ack1), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK2", $sformatf("%x", ack2), UVM_LOW);
-        `uvm_info("SCOREBOARD ACK3", $sformatf("%x", ack3), UVM_LOW);
-        `uvm_info("SCOREBOARD FULL0", $sformatf("%x", full0), UVM_LOW);
-        `uvm_info("SCOREBOARD FULL1", $sformatf("%x", full1), UVM_LOW);
-        `uvm_info("SCOREBOARD FULL2", $sformatf("%x", full2), UVM_LOW);
-        `uvm_info("SCOREBOARD FULL3", $sformatf("%x", full3), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK0", $sformatf("%x", ack0), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK1", $sformatf("%x", ack1), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK2", $sformatf("%x", ack2), UVM_LOW);
+        //`uvm_info("SCOREBOARD ACK3", $sformatf("%x", ack3), UVM_LOW);
+        //`uvm_info("SCOREBOARD FULL0", $sformatf("%x", full0), UVM_LOW);
+        //`uvm_info("SCOREBOARD FULL1", $sformatf("%x", full1), UVM_LOW);
+        //`uvm_info("SCOREBOARD FULL2", $sformatf("%x", full2), UVM_LOW);
+        //`uvm_info("SCOREBOARD FULL3", $sformatf("%x", full3), UVM_LOW);
         `uvm_info("SCOREBOARD prev id", $sformatf("%x", prev_id), UVM_LOW);
         `uvm_info("SCOREBOARD next id", $sformatf("%x", next_id), UVM_LOW);
-        `uvm_info("SCOREBOARD EMPTY0", $sformatf("%x", empty0), UVM_LOW);
-        `uvm_info("SCOREBOARD EMPTY1", $sformatf("%x", empty1), UVM_LOW);
-        `uvm_info("SCOREBOARD EMPTY2", $sformatf("%x", empty2), UVM_LOW);
-        `uvm_info("SCOREBOARD EMPTY3", $sformatf("%x", empty3), UVM_LOW);
+        //`uvm_info("SCOREBOARD EMPTY0", $sformatf("%x", empty0), UVM_LOW);
+        //`uvm_info("SCOREBOARD EMPTY1", $sformatf("%x", empty1), UVM_LOW);
+        //`uvm_info("SCOREBOARD EMPTY2", $sformatf("%x", empty2), UVM_LOW);
+        //`uvm_info("SCOREBOARD EMPTY3", $sformatf("%x", empty3), UVM_LOW);
         `uvm_info("SCOREBOARD EMPTY BREQ", $sformatf("%x", empty_breq), UVM_LOW);
-        `uvm_info("SCOREBOARD RD0", $sformatf("%x", rd0), UVM_LOW);
-        `uvm_info("SCOREBOARD RD1", $sformatf("%x", rd1), UVM_LOW);
-        `uvm_info("SCOREBOARD RD2", $sformatf("%x", rd2), UVM_LOW);
-        `uvm_info("SCOREBOARD RD3", $sformatf("%x", rd3), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD0", $sformatf("%x", rd0), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD1", $sformatf("%x", rd1), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD2", $sformatf("%x", rd2), UVM_LOW);
+        //`uvm_info("SCOREBOARD RD3", $sformatf("%x", rd3), UVM_LOW);
+        //`uvm_info("SCOREBOARD DATA0", $sformatf("%x", data0), UVM_LOW);
+        //`uvm_info("SCOREBOARD DATA1", $sformatf("%x", data1), UVM_LOW);
+        //`uvm_info("SCOREBOARD DATA2", $sformatf("%x", data2), UVM_LOW);
+        //`uvm_info("SCOREBOARD DATA3", $sformatf("%x", data3), UVM_LOW);
         `uvm_info("SCOREBOARD VALID0", $sformatf("%x", fifo_cpu0_valid), UVM_LOW);
         `uvm_info("SCOREBOARD VALID1", $sformatf("%x", fifo_cpu1_valid), UVM_LOW);
         `uvm_info("SCOREBOARD VALID2", $sformatf("%x", fifo_cpu2_valid), UVM_LOW);
         `uvm_info("SCOREBOARD VALID3", $sformatf("%x", fifo_cpu3_valid), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA0", $sformatf("%x", fifo_cpu0[0]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA1", $sformatf("%x", fifo_cpu1[0]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA2", $sformatf("%x", fifo_cpu2[0]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA3", $sformatf("%x", fifo_cpu3[0]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA0", $sformatf("%x", fifo_cpu0[1]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA1", $sformatf("%x", fifo_cpu1[1]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA2", $sformatf("%x", fifo_cpu2[1]), UVM_LOW);
-        `uvm_info("SCOREBOARD CPU DATA3", $sformatf("%x", fifo_cpu3[1]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU0 DATA0", $sformatf("%x", fifo_cpu0[0]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU1 DATA0", $sformatf("%x", fifo_cpu1[0]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU2 DATA0", $sformatf("%x", fifo_cpu2[0]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU3 DATA0", $sformatf("%x", fifo_cpu3[0]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU0 DATA1", $sformatf("%x", fifo_cpu0[1]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU1 DATA1", $sformatf("%x", fifo_cpu1[1]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU2 DATA1", $sformatf("%x", fifo_cpu2[1]), UVM_LOW);
+        `uvm_info("SCOREBOARD CPU3 DATA1", $sformatf("%x", fifo_cpu3[1]), UVM_LOW);
 endtask
 
 
-function[36:0] fifo_control(input full, input [2:0] cmd, input [31:0] addr, input [1:0] cpu_id);
+function[35:0] fifo_control(input full, input [2:0] cmd, input [31:0] addr, input [1:0] cpu_id);
 
 	logic	[36:0]	out;
 	case({cmd,full})
-		4'b0110: out = {1'b1,2'b01,addr,cpu_id};	
-		4'b1000: out = {1'b1,2'b10,addr,cpu_id};	
-		default :  out = {1'b0,42'b0};
+		4'b0110: out = {2'b01,addr,cpu_id};	
+		4'b1000: out = {2'b10,addr,cpu_id};	
+		default :  out = {36'b0};
 	endcase	
 
 	return out;

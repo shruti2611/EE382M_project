@@ -11,6 +11,7 @@ class last_tx extends uvm_sequence_item;
 
 	logic [11:0] mbus_cmd_array;
 	logic [127:0] mbus_addr_array;
+	logic [3:0] mbus_ack_array;
 
 	function new(string name = "");
 		super.new(name);
@@ -27,7 +28,9 @@ class input_tx extends uvm_sequence_item;
 	rand logic broad_fifo_status_full;
 	rand logic rst;
 
-	logic	[11:0]	 last_cmd_array;
+	logic [11:0]	 last_cmd_array;
+	logic [127:0]	 last_addr_array;
+	logic [3:0] 	 last_ack_array;
 
 	virtual mesi_output_interface mesi_out;
 
@@ -40,25 +43,34 @@ class input_tx extends uvm_sequence_item;
 	function void post_randomize();
 		
 		$display("Its post randomization");
-		
-		if(mesi_out.mbus_ack_array[0] == 1'b0)
+		$display("MBUS CMD : %x", mbus_cmd_array);	
+		$display("LAST CMD : %x", last_cmd_array);	
+		if((last_ack_array[0] == 1'b0) && (last_cmd_array[2:0] === 3'b011 || last_cmd_array[2:0] === 3'b100))
 		begin
 			mbus_cmd_array[2:0] 		= last_cmd_array[2:0];
+			mbus_addr_array[31:0] 		= last_addr_array[31:0];
+			$display("MBUS_CMD 0");
 		end
 		
-		if(mesi_out.mbus_ack_array[1] == 1'b0)
+		if((last_ack_array[1] == 1'b0) && (last_cmd_array[5:3] === 3'b011 || last_cmd_array[5:3] === 3'b100))
 		begin
 			mbus_cmd_array[5:3] 		= last_cmd_array[5:3];
+			mbus_addr_array[63:32] 		= last_addr_array[63:32];
+			$display("MBUS_CMD 1");
 		end
 		
-		if(mesi_out.mbus_ack_array[2] == 1'b0)
+		if((last_ack_array[2] == 1'b0) && (last_cmd_array[8:6] === 3'b011 || last_cmd_array[8:6] === 3'b100))
 		begin
 			mbus_cmd_array[8:6] 		= last_cmd_array[8:6];
+			mbus_addr_array[95:64] 		= last_addr_array[95:64];
+			$display("MBUS_CMD 2");
 		end
 		
-		if(mesi_out.mbus_ack_array[3] == 1'b0)
+		if((last_ack_array[3]) == 1'b0 && (last_cmd_array[11:9] === 3'b011 || last_cmd_array[11:9] === 3'b100))
 		begin
 			mbus_cmd_array[11:9] 		= last_cmd_array[11:9];
+			mbus_addr_array[127:96] 	= last_addr_array[127:96];
+			$display("MBUS_CMD 3");
 		end
 
 	endfunction
@@ -68,8 +80,6 @@ class input_tx extends uvm_sequence_item;
 	function void pre_randomize();
 
 		$display("Its pre randomization");
-
-		$display("last value : %x", last_cmd_array);
 
 	endfunction
 
@@ -136,16 +146,23 @@ class input_sequence1 extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence1);
 
 	input_tx in_tx;
+	last_tx l_tx;
 
 	function new(string name ="");
 		super.new(name);
+		void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
 	endfunction : new
 	
 	task body();
-
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
-			assert(in_tx.randomize with {in_tx.rst == 1;});
+
+		in_tx.last_cmd_array		= l_tx.mbus_cmd_array;
+		in_tx.last_addr_array		= l_tx.mbus_addr_array;
+		in_tx.last_ack_array		= l_tx.mbus_ack_array;
+		$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
+
+		assert(in_tx.randomize with {in_tx.rst == 1;});
 	
 		finish_item(in_tx);
 
@@ -155,20 +172,26 @@ endclass:input_sequence1
 class input_sequence2 extends uvm_sequence #(input_tx);
 	`uvm_object_utils(input_sequence2);
 
+	input_tx in_tx;
 	last_tx l_tx;
+
 	function new(string name ="");
 		super.new(name);
 		void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
 	endfunction : new
 
 	task body();
-		input_tx in_tx;
 		in_tx 		= input_tx::type_id::create("in_tx");
 		start_item(in_tx);
+
 		in_tx.last_cmd_array		= l_tx.mbus_cmd_array;
-		assert(in_tx.randomize() with { in_tx.rst == 0;mbus_addr_array == {32'h11,32'h22,32'h33,32'h44};broad_fifo_status_full == 1'b0;} );
-		l_tx.mbus_cmd_array		= in_tx.mbus_cmd_array;
+		in_tx.last_addr_array		= l_tx.mbus_addr_array;
+		in_tx.last_ack_array		= l_tx.mbus_ack_array;
 		$display("*********************************** l_tx %x", l_tx.mbus_cmd_array);
+
+		assert(in_tx.randomize() with { in_tx.rst == 0;broad_fifo_status_full == 1'b0;} );
+
+	
 		finish_item(in_tx);
 	endtask : body
 endclass:input_sequence2
@@ -253,7 +276,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                 seq.start(p_sequencer);
             end
 	
-	repeat(10)
+	repeat(100)
             begin
         	input_sequence2 seq2;
         	seq2 = input_sequence2::type_id::create("seq2");
