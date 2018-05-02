@@ -53,8 +53,14 @@ class scoreboard extends uvm_scoreboard;
 			
 			sfifo_in.get(in_tx);
 			sfifo_out.get(out_tx);
-			
+		
+			`uvm_info("RESET", $sformatf("Reset Value : %d", in_tx.rst), UVM_LOW);
+			`uvm_info("Input Transaction", in_tx.convert2string(), UVM_LOW);
+			`uvm_info("Output Transaction", out_tx.convert2string(), UVM_LOW);
+	
 			$display("\n\n");
+
+
 			
 		
 	
