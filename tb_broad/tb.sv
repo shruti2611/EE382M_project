@@ -19,12 +19,15 @@ module testbench;
 	//instantiate mesi module
 	mesi_isc_broad broad_module(.clk(mesi_in.clk),
      					.rst(mesi_in.rst),
-     					.cbus_ack_array_i(cbus_ack_array_i),
-					.broad_fifo_wr_i(broad_fifo_wr_i), 
-					.broad_addr_i(broad_addr_i), 
-					.broad_type_i(broad_type_i),
-					.broad_cpu_id_i(broad_cpu_id_i),
-					.broad_id_i(broad_id_i)
+     					.cbus_ack_array_i(mesi_in.cbus_ack_array_i),
+					.broad_fifo_wr_i(mesi_in.broad_fifo_wr_i), 
+					.broad_addr_i(mesi_in.broad_addr_i), 
+					.broad_type_i(mesi_in.broad_type_i),
+					.broad_cpu_id_i(mesi_in.broad_cpu_id_i),
+					.broad_id_i(mesi_in.broad_id_i),
+					.cbus_addr_o(mesi_out.cbus_addr_o),
+     					.cbus_cmd_array_o(mesi_out.cbus_cmd_array_o),
+     					.fifo_status_full_o(mesi_out.fifo_status_full_o)
 					);
 
 	//Generate clock
