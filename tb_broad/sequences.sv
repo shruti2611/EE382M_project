@@ -5,18 +5,6 @@ package sequences;
 import uvm_pkg::*;
 
 
-/********** new class **************/
-class last_tx extends uvm_sequence_item;
-	`uvm_object_utils(last_tx);
-
-
-	function new(string name = "");
-		super.new(name);
-	endfunction : new
-	
-endclass : last_tx
-
-/************************************/
 class input_tx extends uvm_sequence_item;
 	`uvm_object_utils(input_tx);
 
@@ -108,7 +96,7 @@ class input_sequence1 extends uvm_sequence#(input_tx);
 		in_tx 		= input_tx::type_id::create("in_tx");
 
 		start_item(in_tx);
-			assert(in_tx.randomize() with {in_tx.rst == 0; broad_id_i inside {5'b0,5'b01,5'b10,5'b11}; broad_addr_i inside {{8'h1,8'h2,8'h3,8'h4}, {8'h5,8'h6,8'h7,8'h8}, {8'h9,8'h10,8'h11,8'h12}, {8'h13,8'h14,8'h15,8'h16} };});
+			assert(in_tx.randomize() with {in_tx.rst == 0; broad_addr_i inside {{8'h1,8'h2,8'h3,8'h4}, {8'h5,8'h6,8'h7,8'h8}, {8'h9,8'h10,8'h11,8'h12}, {8'h13,8'h14,8'h15,8'h16} };});
 		finish_item(in_tx);
 
 	endtask : body
@@ -147,13 +135,11 @@ class seq_of_commands extends uvm_sequence #(input_tx);
 
 	virtual mesi_output_interface mesi_out;
 	virtual mesi_input_interface mesi_in;
-	last_tx l_tx;
 
         function new (string name = "");
             super.new(name);
 	    void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
 	    void'(uvm_config_db#(virtual mesi_input_interface)::get(null,"*","mesi_in",mesi_in));
-	    void'(uvm_config_db#(last_tx)::get(null,"*","l_tx",l_tx));
         endfunction: new
 
         task body;
@@ -175,7 +161,7 @@ class seq_of_commands extends uvm_sequence #(input_tx);
             end
 
 
-	repeat(100)
+	repeat(1000)
 	        begin
 	          input_sequence1 seq;
 	          seq = input_sequence1::type_id::create("seq");

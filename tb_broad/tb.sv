@@ -14,7 +14,6 @@ module testbench;
 
 	mesi_input_interface mesi_in(clk);
 	mesi_output_interface mesi_out(clk);
-	last_tx l_tx		= last_tx::type_id::create("l_tx");
 	
 	//instantiate mesi module
 	mesi_isc_broad broad_module(.clk(mesi_in.clk),
@@ -44,7 +43,6 @@ module testbench;
 	initial begin
 		uvm_config_db #(virtual mesi_input_interface)::set(null, "*", "mesi_in", mesi_in);
 		uvm_config_db #(virtual mesi_output_interface)::set(null, "*", "mesi_out", mesi_out);
-	    	uvm_config_db#(last_tx)::set(null,"*","l_tx",l_tx);
 		run_test("sample_test");
 	end 
 
