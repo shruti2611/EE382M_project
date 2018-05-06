@@ -106,7 +106,7 @@ class input_monitor extends uvm_monitor;
 		forever
 		begin
 			input_tx in_tx;
-			@(posedge mesi_in.clk)
+			@(posedge mesi_in.clk);
 
 			in_tx 		= input_tx::type_id::create("in_tx");
 

@@ -17,16 +17,18 @@ class input_tx extends uvm_sequence_item;
                                       // CPU id array
 	rand	logic [4:0] 		broad_id_i; // Broadcast request ID array
 
-	//rand	logic	[11:0]	 	last_cmd_array;
-
 	virtual mesi_output_interface mesi_out;
+
+	constraint broad_type_constraint {broad_type_i inside {3'b010, 3'b001};}
+	constraint broad_full_constraint {if(mesi_out.fifo_status_full_o == 1'b1)
+						broad_fifo_wr_i		== 1'b0;
+					}
 
 	function new(string name = "");
 		super.new(name);
 		void'(uvm_config_db#(virtual mesi_output_interface)::get(null,"*","mesi_out",mesi_out));
 	endfunction : new
 
-	
 	
 	function string convert2string;
             convert2string={$sformatf("cbus_ack_array_i = %x, broad_fifo_wr_i = %x, broad_addr_i = %x,broad_type_i = %x, broad_cpu_id_i = %x, broad_id_i = %x",  cbus_ack_array_i,broad_fifo_wr_i,broad_addr_i,broad_type_i, broad_cpu_id_i,broad_id_i)};
@@ -151,8 +153,9 @@ class seq_of_commands extends uvm_sequence #(input_tx);
                   assert( seq.randomize() );
                   seq.start(p_sequencer);
             end*/
-
-	repeat(1)
+	repeat(10)
+	begin
+	repeat(5)
 	        begin
 	          input_sequence2 seq;
 	          seq = input_sequence2::type_id::create("seq");
@@ -161,14 +164,14 @@ class seq_of_commands extends uvm_sequence #(input_tx);
             end
 
 
-	repeat(1000)
+	repeat(10)
 	        begin
 	          input_sequence1 seq;
 	          seq = input_sequence1::type_id::create("seq");
                   assert( seq.randomize() );
                   seq.start(p_sequencer);
             end
-
+	end
 	
 
         endtask: body

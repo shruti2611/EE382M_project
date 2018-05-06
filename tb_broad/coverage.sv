@@ -28,94 +28,10 @@ class coverage extends uvm_component;
 
 	
  	virtual mesi_input_interface mesi_in;
-
-	
-	covergroup broad_fifo_cover;
-
-		/******** Input cover points ******************/
-
-		reset:	coverpoint rst {
-			bins high = {1'b1};
-			bins low = {1'b0};
-	
-		}
-		
-		cbus_ack_0 : coverpoint cbus_ack_array_i[0] {
-			bins high = {1'b1};
-			bins low  = {1'b0};
-		}
-
-		cbus_ack_1 : coverpoint cbus_ack_array_i[1] {
-			bins high = {1'b1};
-			bins low  = {1'b0};
-		}
-
-		cbus_ack_2 : coverpoint cbus_ack_array_i[2] {
-			bins high = {1'b1};
-			bins low  = {1'b0};
-		}
-
-		cbus_ack_3 : coverpoint cbus_ack_array_i[3] {
-			bins high = {1'b1};
-			bins low  = {1'b0};
-		}
-
-
-		broad_type : coverpoint	broad_type_i {
-			bins rd = {2'b01};
-			bins wr = {2'b11};
-		}
-
-		broad_cpu_id : coverpoint broad_cpu_id_i {
-			bins cpu_0 = {2'b00};
-			bins cpu_1 = {2'b01};
-			bins cpu_2 = {2'b10};
-			bins cpu_3 = {2'b11};
-
-		}
-		
-		/**************** Output cover points *******************/
-
-		cbus_cmd_array_0 : coverpoint cbus_cmd_array_o[2:0] {
-			bins cmd_0_wr_snoop = {3'b001};
-			bins cmd_0_rd_snoop = {3'b010};
-			bins cmd_0_wr = {3'b011};
-			bins cmd_0_rd = {3'b100};
-		}
-
-		cbus_cmd_array_1 : coverpoint cbus_cmd_array_o[5:3] {
-			bins cmd_1_wr_snoop = {3'b001};
-			bins cmd_1_rd_snoop = {3'b010};
-			bins cmd_1_wr = {3'b011};
-			bins cmd_1_rd = {3'b100};
-		} 
-
-		cbus_cmd_array_2 : coverpoint cbus_cmd_array_o[8:6] {
-			bins cmd_2_wr_snoop = {3'b001};
-			bins cmd_2_rd_snoop = {3'b010};
-			bins cmd_2_wr = {3'b011};
-			bins cmd_2_rd = {3'b100};
-		} 
-
-		cbus_cmd_array_3 : coverpoint cbus_cmd_array_o[11:9] {
-			bins cmd_3_wr_snoop = {3'b001};
-			bins cmd_3_rd_snoop = {3'b010};
-			bins cmd_3_wr = {3'b011};
-			bins cmd_3_rd = {3'b100};
-		} 
- 
-		fifo_status_full : coverpoint fifo_status_full_o {
-			bins not_full = {1'b0};
-			bins full = {1'b1};
-		}
-
-	endgroup
-
 	
 	
 	function new(string name, uvm_component parent);
 		super.new(name, parent);
-		broad_fifo_cover = new;
 	endfunction:new
 
 	function void connect_phase(uvm_phase phase);
@@ -161,7 +77,7 @@ class coverage extends uvm_component;
 			cbus_cmd_array_o = out_tx.cbus_cmd_array_o;
 			fifo_status_full_o = out_tx.fifo_status_full_o;
 
-			broad_fifo_cover.sample();			
+						
 			
 		end
 	endtask: run_phase
