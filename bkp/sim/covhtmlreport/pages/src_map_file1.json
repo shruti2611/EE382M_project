@@ -1,5 +1,0 @@
-var g_data = {'dummy':null,
-'2':'../tb/coverage.sv',
-'3':'../tb/modules.sv',
-'1':'../tb/sequences.sv',
-'4':'../tb/tests.sv'};
