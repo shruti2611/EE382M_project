@@ -65,10 +65,10 @@ class coverage extends uvm_component;
 				bins high = {1'b1};
 		}
 
-		broad_fifo_status : coverpoint broad_fifo_status_full {
+		/*broad_fifo_status : coverpoint broad_fifo_status_full {
 				bins full = {1'b1};
 				bins empty = {1'b0};
-		}
+		}*/
 
 		/************** Output cover points ******************/
 		ack_0 : coverpoint mbus_ack_array[0] {
@@ -93,11 +93,9 @@ class coverage extends uvm_component;
 
 		broad_fifo_write : coverpoint broad_fifo_wr {
 				bins high = {1'b1};
-				bins low  = {1'b0};
 		}
 
 		type_broad : coverpoint broad_type {
-				bins	nop = {2'b00};
 				bins    wr  = {2'b01};
 				bins 	rd  = {2'b10}; 
 		}
@@ -119,8 +117,8 @@ class coverage extends uvm_component;
 
 	/***************** crosses ***************/
 
-	cross_cpu_id: cross id_broad, type_broad;
-	cross_broad_wr : cross id_broad,broad_fifo_wr;
+	cross_cpu_id: cross cpu_id_broad, type_broad;
+	cross_broad_wr : cross cpu_id_broad,broad_fifo_write;
 
 
 
